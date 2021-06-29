@@ -1,0 +1,43 @@
+// -----------------------
+// Lexical grammar (Tokens)
+// -----------------------
+
+%lex
+
+%%
+
+\s+													/*Skip white space*/
+
+\"[^\"]*\"	return 'STRING'							/*Define String as "something in between double quotes"*/
+
+\d+		return 'NUMBER'								/*Define Number as any decimal values*/
+
+[\w\-+*=<>/]+	return 'SYMBOL' 					/*Define Symbol as any of the given*/
+
+
+/lex
+
+// -----------------------
+// Syntactic grammar (BNF)
+// -----------------------
+%%
+
+Exp
+  : Atom
+  | List
+  ;
+
+Atom
+  : NUMBER { $$ = Number($1) } 						/*Return the decimal value of the number, not string*/
+  | STRING
+  | SYMBOL
+  ;
+
+List
+  : '(' ListEntries ')' { $$ = $2 }					/*Return the entries of the list*/
+  ;
+
+ListEntries
+  : ListEntries Exp { $1.push($2); $$ = $1 }		/*Add Second Expression to List of the first and return the first*/			
+  | { $$ = [] }										/*Return an empty array, as ListEntries is optional and can be empty*/
+  ;
