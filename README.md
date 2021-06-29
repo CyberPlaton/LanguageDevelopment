@@ -3,7 +3,8 @@
 Learning to develop an interpreted language by following the course of Dmitry Soshnikov "Building an Interpreter from Scratch".  
 While the course is in JavaScript, I´ve decided to build it in C++, for a possible usage in Game Development.
 
-
+  
+    
 ### 29.06.2021  
 #### Supported Types:
 Bool, Double, String, Null
