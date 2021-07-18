@@ -5,6 +5,7 @@
 #include <map>
 #include <regex>
 #include <fstream>
+#include <functional>
 
 
 #include "ColorConsole.h"
@@ -14,11 +15,54 @@
 class Environment
 {
 public:
-	Environment(Environment* parent) : parent_env(parent)
+	enum ScopeType
 	{
+		SCOPE_INVALID = -1,
+		SCOPE_GLOBAL = 0, // Main Scope for the program.
+		SCOPE_FUNCTION,   // Created Scope on entering a function.
+		SCOPE_AGGREGATE   // Created Scope for each created class/struct.
+	};
+
+public:
+	Environment(Environment* parent, ScopeType type = ScopeType::SCOPE_GLOBAL) : parent_env(parent)
+	{
+		Environment::env_count++;
+
+		if (parent == nullptr)
+		{
+			scope_name = "Global Environment";
+		}
+		else
+		{
+			scope_name = parent->scope_name + "_child_" + std::to_string(Environment::env_count);
+
+			parent_env->children_env.push_back(this);
+		}
+
+		scope_type = type;
 	}
 
+	bool doesExist(const std::string& name)
+	{
+		try
+		{
+			if (_resolve(name).record[name].m_Value.has_value())
+			{
+				return true;
+			}
+		}
+		catch (...)
+		{
+			return false;
+		}
 
+		return false;
+	}
+
+	/*
+	* Used in e.g. "set x = 25",
+	* meaning giving new value to an existing variable.
+	*/
 	Any& assign(const std::string& name, Any& value)
 	{
 		_resolve(name).record[name] = std::move( value );
@@ -26,6 +70,10 @@ public:
 	}
 
 
+	/*
+	* Used in e.g. "var x = 10",
+	* meaning introducing a new variable into the record.
+	*/
 	Any& define(const std::string& name, Any& value)
 	{
 		record.emplace(name, value);
@@ -39,7 +87,42 @@ public:
 	}
 
 
+	std::string env_name() { return this->scope_name; }
+	ScopeType env_scope_type() { return this->scope_type; }
+	
+	static Environment* get_global_environment(Environment* kid)
+	{
+		while (kid->parent_env != nullptr) // Go the up the tree hierarchy.
+		{
+			kid = kid->parent_env;
+		}
+
+		return kid; // The global env. at this point.
+	}
+
+	static void print_env_tree(Environment* root)
+	{
+		root->_print_self_and_children(0);
+	}
+
+	static std::string scope_type_string(ScopeType t)
+	{
+		switch (t)
+		{
+		case ScopeType::SCOPE_AGGREGATE:
+			return "aggregate";
+		case ScopeType::SCOPE_FUNCTION:
+			return "function";
+		case ScopeType::SCOPE_GLOBAL:
+			return "global";
+		default:
+			return "invalid";
+		}
+	}
+
 private:
+
+	static unsigned int env_count;
 
 	// Variables record of this environment.
 	std::map<std::string, Any> record;
@@ -47,8 +130,72 @@ private:
 
 	// Parent environment.
 	Environment* parent_env = nullptr;
+	std::vector<Environment*> children_env;
+
+	std::string scope_name;
+	ScopeType scope_type = ScopeType::SCOPE_INVALID;
 
 private:
+
+	void _print_self_and_children(int offset = 0)
+	{
+		using namespace std;
+		cout << color(colors::GREEN);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << "Environment := { " << endl;
+
+
+		cout << color(colors::YELLOW);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << "Scope Name: ";
+		cout << color(colors::MAGENTA);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << scope_name << white << endl;
+
+		cout << color(colors::YELLOW);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << "Scope Type: ";
+		cout << color(colors::MAGENTA);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << Environment::scope_type_string(scope_type) << white << endl;
+
+		
+		_print_scope_members(offset + 1);
+
+		cout << color(colors::GREEN);
+		cout << "} " << white << endl << endl << endl;
+
+		for (auto& kid : children_env)
+		{
+			kid->_print_self_and_children(offset + 1);
+		}
+	}
+
+
+	void _print_scope_members(int offset = 0)
+	{
+		using namespace std;
+		cout << color(colors::DARKGREEN);
+		for (int i = 0; i < offset; i++) cout << "\t";
+		cout << "Environment Record := { " << endl;
+
+		for (auto& entry : record)
+		{
+			cout << color(colors::DARKGREEN);
+			for (int i = 0; i < offset; i++) cout << "\t";
+			cout << "\"" << entry.first << "\" := { " << endl;
+
+			entry.second.reprSelf(offset + 1);
+
+			cout << color(colors::DARKGREEN);
+			for (int i = 0; i < offset; i++) cout << "\t";
+			cout << "}," << white << endl;
+		}
+
+		cout << color(colors::DARKGREEN);
+		for (int i = 0; i < offset - 1; i++) cout << "\t";
+		cout << "};" << white << endl << endl << endl;
+	}
 
 
 	Environment& _resolve(const std::string& name)
@@ -69,14 +216,15 @@ private:
 		else
 		{
 			cout << color(colors::RED);
-			cout << "Variable not Defined \"" << name << "\"" << white << endl;
+			cout << "Variable not Defined \"" << name << "\"" << endl;
+			cout << "Environment: \""<< this->scope_name << "\"" << white << endl;
 
 			throw std::runtime_error("Variable not Defined!");
 		}
 	}
 };
 
-
+unsigned int Environment::env_count = 0;
 
 
 
@@ -98,12 +246,18 @@ public:
 
 
 
-	Any& eval(Exp& exp, Environment* env = nullptr)
+	Any& eval(Exp& exp, Environment* env = nullptr, bool debug_out = false)
 	{
 		using namespace std;
 
 		if (!env) env = global_environment;
 
+		if (debug_out)
+		{
+			cout << color(colors::DARKCYAN);
+			cout << "EVAL EXP: " << endl;
+			exp.representSelf();
+		}
 
 		/*
 		* Self evaluating.
@@ -208,7 +362,7 @@ public:
 			*/
 			if (COMPARE_STRINGS(op_code, "begin") == 0)
 			{
-				Environment* block_env = new Environment(env);
+				Environment* block_env = new Environment(env, Environment::SCOPE_FUNCTION);
 				return _evalBlock(exp, block_env);
 			}
 
@@ -244,6 +398,32 @@ public:
 			}
 
 
+			/*
+			* User function declarations.
+			* 
+			*/
+			if (COMPARE_STRINGS(op_code, "def") == 0)
+			{
+				// Function name.
+				std::string name = exp.expression[1].as<const char*>();
+
+
+				Exp body;
+				
+				for (int i = 0; i < exp.expression.size(); i++)
+				{
+					// Skip "def" keyword and function name.
+					if (i == 0 || i == 1) continue;
+
+					body.expression.push_back(exp.expression[i]);
+				}
+
+
+				// Store function in environment as an expression,
+				// which can be looked up by name and evaluated dynamically.
+				return env->define(name, *new Any(body, Any::TYPE_EXP));
+			}
+
 		}
 
 		/*
@@ -251,7 +431,137 @@ public:
 		*/
 		if (_isVariable(exp))
 		{
-			return env->lookup(std::string(exp.expression[0].as< const char*>()));
+			// Get what is stored under name.
+			Any& var = env->lookup(std::string(exp.expression[0].as< const char*>()));
+
+
+			// If we stored an expression under the name,
+			// then evaluate it first and then return the result, so take it as a "function call".
+			if (var.m_Type == Any::Type::TYPE_EXP)
+			{
+
+				// First, the count of parameters and defined parameters in function should match,
+				// else display an error indicating problem.
+				if (exp.expression.size() != var.as<Exp>().expression.size())
+				{
+					cout << color(colors::RED);
+					cout << "Mismatch of Parameter Count in Function Body: {" << white << endl;
+
+					var.reprSelf(1);
+
+					cout << color(colors::RED);
+					cout << "}" << white << endl;
+
+
+					// Show expected number and actually supplied.
+					cout << color(colors::RED);
+					cout << "Supplied: " << exp.expression.size() - 1 << endl; // Do not count the function name as param.
+					cout << "Expected: " << var.as<Exp>().expression.size() - 1 << white << endl; // Do not count the function body as param.
+
+					throw std::runtime_error("Parameter Mismatch in Function!");
+				}
+
+
+				Exp body;
+				Environment* activation_env = new Environment(env, Environment::SCOPE_FUNCTION); // This is DYNAMIC!
+
+
+				Exp e = var.as<Exp>();
+				for (int index = 0; index <= exp.expression.size(); index++)
+				{
+					/*
+					* NOTE!
+					* 
+					* The index goes from 0 to exp.expression.size(),
+					* because the 0-th index in "exp.expression[index]" is the function name, which we can skip,
+					* after it we have a variable amount of variable names: "exp.expression[n]".
+					* 
+					* And as "exp.expression" and "e.expression" are ensured to have the same size,
+					* (meaning there are same amount of given parameters and needed parameters),
+					* we would not catch the actual function body defined in the last entry of "e.expression"
+					* if we would only iterate through 0 to "exp.expression.size() - 1".
+					* 
+					*/
+
+
+					// Skip the function-name
+					if (index == 0) continue;
+
+
+					// Get the function body if we reached it.
+					if (e.expression[index - 1].m_Type == Any::TYPE_EXP)
+					{
+						body = Exp(e.expression[index - 1]);
+						break;
+					}
+					else
+					{
+						// Get the parameter name.
+						std::string param_name = e.expression[index - 1].as<const char*>();
+
+						// Get the parameter self.
+						Any param_value = exp.expression[index];
+
+
+						if (debug_out)
+						{
+							cout << color(colors::RED);
+							cout << "param_name := \"" << param_name << "\" ";
+							param_value.reprSelf(1);
+						}
+
+
+						// Try define param in environment
+						if (!env->doesExist(param_name))
+						{
+							if (debug_out)
+							{
+								cout << color(colors::RED);
+								cout << "define := \"" << param_name << "\" in env" << white << endl;
+
+							}
+							
+							activation_env->define(param_name, param_value);
+						}
+						else
+						{
+							if (debug_out)
+							{
+								cout << color(colors::RED);
+								cout << "skip definition of existing param := \"" << param_name << "\" in env " << white << endl;
+							}
+						}
+
+					}
+				}
+
+				/*
+				* TODO Current Problem: 16.07.21.
+				* 
+				* Value of parameter changes in environment.record as we proceed with execution.
+				* e.g. in the expression
+				* 
+				*	Exp("+", Exp("+", "func_param", "func_param"), "func_param")),
+				*		Exp("square", 2.0)
+				* 
+				* we first add "func_param" + "func_param", which results in 4.0,
+				* after that as we access to add again "func_param" + "func_param"
+				* it results in 4.0 + 4.0 = 8.0,
+				* which is not the desired behaviour.
+				*/
+
+				return this->eval(body, activation_env);
+			}
+			else // Else just return the value.
+			{
+				if (debug_out)
+				{
+					cout << color(colors::RED);
+					cout << "VARIABLE ACCESS := "; var.reprSelf(1); cout << endl;
+				}
+				
+				return var;
+			}
 		}
 
 
@@ -351,15 +661,63 @@ Any& eva_built_in_print(const std::string& text)
 {
 	using namespace std;
 	cout << color(colors::DARKCYAN);
-	cout << "[EVA] eva_built_in_print(...) \"";
+	cout << "[EVA] eva_built_in_print(...)\t";
 	
 	cout << color(colors::CYAN);
 	cout << text;
 
 	cout << color(colors::DARKCYAN);
-	cout << "\"" << white << endl;
+	cout << white << endl;
 
 	// Basically Return "void" = "null".
+	return *new Any(nullptr, Any::Type::TYPE_VAR);
+}
+
+
+template < class ... Args >
+Any& eva_built_in_printf(Args... args)
+{
+	using namespace std;
+	cout << color(colors::DARKCYAN);
+	cout << "[EVA] eva_built_in_printf(...)\t";
+
+	std::vector<Any> vec = { args... };
+
+	std::streamsize p = std::cout.precision();
+
+	for (auto& e : vec)
+	{
+		switch (e.type())
+		{
+		case Any::Type::TYPE_BOOL:
+
+			cout << color(colors::CYAN);
+			cout << e.as<bool>() << " ";
+			break;
+
+		case Any::Type::TYPE_NUMBER:
+
+			cout << color(colors::CYAN);
+			cout.precision(32);
+			cout <<  e.as<double>() << " ";
+			cout.precision(p);
+			break;
+
+		case Any::Type::TYPE_STRING:
+
+			cout << color(colors::CYAN);
+			cout << e.as<const char*>();
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+	cout << color(colors::DARKCYAN);
+	cout << white << endl;
+	
 	return *new Any(nullptr, Any::Type::TYPE_VAR);
 }
 
@@ -413,10 +771,10 @@ Any& eva_built_in_div(Any& lhs, Any& rhs)
 }
 
 
-
 int main()
 {
 	using namespace std;
+
 
 	// Create some expressions for evaluation.
 	Exp e("\"Hello\"", "\"World\"");
@@ -485,12 +843,31 @@ int main()
 	Any& func4 = *new Any(&eva_built_in_mul, Any::Type::TYPE_VAR);
 	Any& func5 = *new Any(&eva_built_in_div, Any::Type::TYPE_VAR);
 
+	/*
+	* This function is a test on how we could achieve variable parameter count in eva.
+	* 
+	* Here we define a function that takes 4 "Any" values as param and prints them,
+	* do define the same with more or less params, do:
+	* 
+	* e.g.
+	* 
+	* *new Any(&eva_built_in_printf<Any&, Any&, Any&, Any&, Any&, Any&, Any&, Any&>, Any::Type::TYPE_VAR)	// For 8 parameters...
+	* 
+	* and call later to eval with:
+	* 
+	* eva.eval(*new Exp("printf")).as<Any& (*)(Any&, Any&, Any&, Any&, Any&, Any&, Any&, Any&)>()(first, second, third, fourth, fifth, sixth, seventh, eight);
+	*/
+	Any& func6 = *new Any(&eva_built_in_printf<Any&, Any&, Any&, Any&>, Any::Type::TYPE_VAR);
+	global_env->define("printf", func6);
+
+
 
 	global_env->define("print", func);
 	global_env->define("add", func2);
 	global_env->define("sub", func3);
 	global_env->define("mul", func4);
 	global_env->define("div", func5);
+
 
 
 	Eva eva(global_env);
@@ -504,7 +881,7 @@ int main()
 	* 
 	* =>	Well actually, EVERYTHING, that is not a STRING is an OPCODE,
 	*		e.g. "result" is here a variable name and will be looked up in the Environment::Record map.
-	*		e.g. "<", "begin", "while", "set" etc. a are clearly an OPCODE.
+	*		e.g. "<", "begin", "while", "set" etc. are clearly an OPCODE.
 	*/
 	Exp while_loop("begin",
 
@@ -784,7 +1161,6 @@ int main()
 		cout << "Passed!" << white << endl;
 	}
 
-
 	Any& a = *new Any(25.0, Any::Type::TYPE_NUMBER);
 	Any& b = *new Any(25.0, Any::Type::TYPE_NUMBER);
 
@@ -826,9 +1202,82 @@ int main()
 		cout << "Passed!" << white << endl;
 	}
 
-	//assert(test_math_and_recursive_math());
-	//assert(test_var_decl());
-	//assert(test_scope_declaration());
+
+	Any& name = *new Any("Bogdan ", Any::Type::TYPE_STRING);
+	Any& name2 = *new Any(true, Any::Type::TYPE_BOOL);
+	Any& name3 = *new Any(99182.019282978111111111112151241231215142367847694568, Any::Type::TYPE_NUMBER);
+	Any& name4 = *new Any("Nice! \n", Any::Type::TYPE_STRING);
+
+
+	eva.eval(*new Exp("printf")).as<Any& (*)(Any&, Any&, Any&, Any&)>()(name, name2, name3, name4);
+
+
+
+
+	/*
+	* USER DEFINED FUNCTIONS.
+	* 
+	* { // begin
+	* 
+	* 
+	*	def square(func_param) 
+	*		(func_param + func_param) + func_param			// return
+	* 
+	* }
+	* 
+	* e.g. func_param = 2.0
+	*		should result in (2.0 + 2.0) + 2.0 = 6.0.
+	* 
+	*/
+	test_e = Exp("begin",
+				Exp("def", "square", "func_param",
+						Exp("+", Exp("+", "func_param", "func_param"), "func_param")
+				), 
+		Exp("square", 2.0)
+	);
+
+	double result = eva.eval(test_e).as<double>();
+	double expect = 6.0;
+	if (result == expect)
+	{
+		cout << color(colors::GREEN);
+		cout << "Passed!" << white << endl;
+	}
+	else
+	{
+		cout << color(colors::RED);
+		cout << "Expected:" << expect << endl;
+		cout << "Result:" << result << white << endl;
+	}
+
+	test_e = Exp("begin",
+		Exp("def", "square", "func_param",
+			Exp("*", Exp("+", "func_param", "func_param"), "func_param")
+		),
+		Exp("square", 4.0)
+	);
+
+	/*
+	* (4 + 4) * 4 = 8 * 4 = 32.
+	*/
+	result = eva.eval(test_e).as<double>();
+	expect = 32.0;
+	if (result == expect)
+	{
+		cout << color(colors::GREEN);
+		cout << "Passed!" << white << endl;
+	}
+	else
+	{
+		cout << color(colors::RED);
+		cout << "Expected:" << expect << endl;
+		cout << "Result:" << result << white << endl;
+	}
+
+
+
+	// Print Environments.
+	//Environment::print_env_tree(global_env);
 
 	return 0;
 }

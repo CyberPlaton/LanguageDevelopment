@@ -4,6 +4,8 @@ void Any::reprSelf(unsigned offset)
 {
 	using namespace std;
 
+	std::any dummy_null(nullptr);
+
 	for (int i = 0; i < offset; i++) cout << "\t";
 
 	switch (m_Type)
@@ -88,8 +90,36 @@ void Any::reprSelf(unsigned offset)
 		cout << color(colors::YELLOW);
 		cout << "Value: ";
 
-		cout << color(colors::MAGENTA);
-		cout << "\" " << std::any_cast<const char*>(m_Value) << " \" ";
+		try
+		{
+			// Check whether variable is "null".
+			if (dummy_null.type().hash_code() == m_Value.type().hash_code())
+			{
+				cout << color(colors::MAGENTA);
+				cout << "\" " << "null" << " \" ";
+			}
+			// Check whether the datatype is a function declaration.
+			else if (std::string(m_Value.type().name()).find("(__cdecl*)") != std::string::npos)
+			{
+				cout << color(colors::MAGENTA);
+				cout << "\" " << "Function Declaration " << "\" ";
+				cout << color(colors::DARKMAGENTA);
+				cout << "	Function Type: " << m_Value.type().name() << white << endl;
+			}
+			// Else it should be a standard variable name.
+			else
+			{
+				cout << color(colors::MAGENTA);
+				cout << "\" " << std::any_cast<const char*>(m_Value) << " \" ";
+			}
+		}
+		catch (...) // In any case, catch something unexpected and show what we did not consider.
+		{
+			cout << endl;
+			cout << color(colors::RED);
+			cout << "Unable to Represent Self! Datatype: "<< m_Value.type().name() << white << endl;
+		}
+
 
 		cout << color(colors::YELLOW);
 		cout << "Type: ";
@@ -97,6 +127,7 @@ void Any::reprSelf(unsigned offset)
 		cout << color(colors::MAGENTA);
 		cout << "\"VAR\"" << white << endl;
 		break;
+
 
 	default:
 		break;

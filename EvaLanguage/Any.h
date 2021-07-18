@@ -188,8 +188,7 @@ public:
 
 		if (m_Type == TYPE_NUMBER) // Standard addition of numbers.
 		{
-			this->m_Value = std::any( std::move(  this->as<double>() + std::any_cast<double>(rhs.m_Value)  ) );
-			this->m_Type = Any::Type::TYPE_NUMBER;
+			return *new Any(std::any(this->as<double>() + std::any_cast<double>(rhs.m_Value)), Any::TYPE_NUMBER);
 		}
 		else if (m_Type == TYPE_STRING)// Addition of strings is just concat.
 		{
@@ -198,9 +197,7 @@ public:
 			char* other = new char[strlen(concat.c_str()) + 1];
 			strcpy(other, concat.c_str());
 			
-			this->m_Value = std::any(std::move(reinterpret_cast<const char*>(other))); // .. but store as const char* for compatability.
-			this->m_Type = Any::Type::TYPE_STRING;
-
+			return *new Any(std::any(std::move(reinterpret_cast<const char*>(other))), Any::TYPE_STRING);
 		}
 		else
 		{
@@ -221,8 +218,7 @@ public:
 
 		if (m_Type == TYPE_NUMBER) // Standard subtraction of numbers.
 		{
-			this->m_Value = std::any(this->as<double>() - std::any_cast<double>(rhs.m_Value));
-			this->m_Type = Any::Type::TYPE_NUMBER;
+			return *new Any(std::any(this->as<double>() - std::any_cast<double>(rhs.m_Value)), Any::TYPE_NUMBER);
 		}
 		else // TODO
 		{
@@ -241,12 +237,7 @@ public:
 			throw std::runtime_error("Invalid Multiplication Operator Type Supplied!");
 		}
 
-
-		this->m_Value = std::any(this->as<double>() * std::any_cast<double>(rhs.m_Value));
-		this->m_Type = Any::Type::TYPE_NUMBER;
-
-		return *this;
-
+		return *new Any(std::any(this->as<double>() * std::any_cast<double>(rhs.m_Value)), Any::TYPE_NUMBER);
 	}
 
 	Any& operator/(const Any& rhs)
@@ -260,15 +251,17 @@ public:
 
 		if (std::any_cast<double>(rhs.m_Value) == 0.0)
 		{
-			throw std::runtime_error("Zero-Division!");
+			throw std::runtime_error("Fatal Error: Zero-Division!");
 		}
 
-		this->m_Value = std::any(this->as<double>() / std::any_cast<double>(rhs.m_Value));
-		this->m_Type = Any::Type::TYPE_NUMBER;
-
-		return *this;
+		return *new Any(std::any(this->as<double>() / std::any_cast<double>(rhs.m_Value)), Any::TYPE_NUMBER);
 	}
 
+	// Returns whether this is a null variable of type std::nullptr_t.
+	bool isNull()
+	{
+		return _isNull(m_Value);
+	}
 
 	// Return the type as unsigned int.
 	Type type() const { return m_Type; }
@@ -328,6 +321,21 @@ public:
 
 private:
 
+
+	bool _isNull(std::any& a)
+	{
+		using namespace std;
+
+		std::any dummy(nullptr);
+		if (dummy.type().hash_code() == a.type().hash_code())
+		{
+			cout << color(colors::RED);
+			cout << "WARNING! Fatal \"null\" Variable Access!" << white << endl;
+			return true;
+		}
+
+		return false;
+	}
 };
 
 
@@ -560,6 +568,11 @@ private:
 				{
 					is_opcode = true;
 				}
+				else if (COMPARE_STRINGS(potential_opcode, "def") == 0)
+				{
+					is_opcode = true;
+				}
+
 
 				// ...
 
