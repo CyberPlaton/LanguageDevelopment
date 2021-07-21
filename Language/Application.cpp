@@ -65,7 +65,7 @@ void Application::onImGui()
 
 
 
-bool Application::startUp(const std::string& title, int width, int height)
+bool Application::startUp(const std::string& title, int width, int height, bool fullscreen)
 {
 	this->title = title;
 	this->width = width;
@@ -84,11 +84,28 @@ bool Application::startUp(const std::string& title, int width, int height)
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
 
-	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+
+
+	if (!fullscreen)
+	{
+		window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+	}
+	else
+	{
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* vidMode = glfwGetVideoMode(monitor);
+		this->width = vidMode->width;
+		this->height = vidMode->height;
+
+		window = glfwCreateWindow(vidMode->width, vidMode->height, title.c_str(), monitor, NULL);
+
+		glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+	}
+
+
 	if (!window)
 	{
 		return false;
-
 	}
 
 

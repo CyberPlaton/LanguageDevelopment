@@ -65,7 +65,7 @@ public:
 	/*
 	* Initialize the program with glew, glfw and imgui.
 	*/
-	bool startUp(const std::string& title, int width, int height);
+	bool startUp(const std::string& title, int width, int height, bool fullscreen = false);
 
 	/*
 	* Turn on or off the imgui demo window.

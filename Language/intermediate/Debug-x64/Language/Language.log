@@ -3,5 +3,5 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft
   Application.cpp
   main.cpp
   Generating Code...
-C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\Application.cpp(157): warning C4715: 'Application::_initImGui': not all control paths return a value
+C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\Application.cpp(174): warning C4715: 'Application::_initImGui': not all control paths return a value
   Language.vcxproj -> C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\bin\Debug-x64\Language\Language.exe

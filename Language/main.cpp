@@ -10,7 +10,7 @@
 int main()
 {
 	Application* app = Application::get();
-	if (app->startUp("IDE", 1920, 1080))
+	if (app->startUp("IDE", 1920, 1080, true))
 	{
 		return app->run();
 	}
