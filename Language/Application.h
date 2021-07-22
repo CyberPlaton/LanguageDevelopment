@@ -13,8 +13,12 @@
 #include "common/include/imgui-master/examples/imgui_impl_opengl3.h"
 
 
+#include "common/include/nlohmann/json.hpp"
+
+
 #include <string>
 #include <iostream>
+#include <fstream>
 
 
 void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int mode);
@@ -76,13 +80,19 @@ public:
 private:
 
 	static Application* g_Application;
-	static bool show_demo_window;
-
 
 	std::string title;
 	int width = 0;
 	int height = 0;
 	GLFWwindow* window = nullptr;
+
+
+	char source_input[1024 * 16];
+	char file_creation_buf[1024];
+	const char *standard_file_path = "source/";
+	std::string recently_used_files_path = "recently_used_files.json";
+	std::string currently_worked_file;
+	int file_count = 0;
 
 private:
 
@@ -100,4 +110,8 @@ private:
 		ImGui::DestroyContext();
 		glfwTerminate();
 	}
+
+
+	void _newFileDialog();
+	void _showRecentlyUsedFiles();
 };

@@ -10,7 +10,7 @@
 int main()
 {
 	Application* app = Application::get();
-	if (app->startUp("IDE", 1920, 1080, true))
+	if (app->startUp("IDE", 920, 720, false))
 	{
 		return app->run();
 	}
@@ -22,7 +22,7 @@ class ASTNode;
 
 
 class Token
-{
+{	
 	friend class ASTNode;
 public:
 	enum Type
