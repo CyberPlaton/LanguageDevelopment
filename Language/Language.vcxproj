@@ -155,6 +155,7 @@
     <ClCompile Include="common\include\imgui-master\imgui.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui_demo.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui_draw.cpp" />
+    <ClCompile Include="common\include\imgui-master\imgui_tables.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

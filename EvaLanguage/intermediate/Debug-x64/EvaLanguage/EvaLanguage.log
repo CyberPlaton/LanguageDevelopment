@@ -1,5 +1,13 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(498,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(499,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  Any.cpp
+C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\Any.cpp(9,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\Any.h(291,35): warning C4101: 'e': unreferenced local variable
+C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\Any.h(191): message : see reference to function template instantiation 'T Any::as<double>(void)' being compiled
+          with
+          [
+              T=double
+          ]
   main.cpp
 C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\Any.h(291,35): warning C4101: 'e': unreferenced local variable
 C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\Any.h(191): message : see reference to function template instantiation 'T Any::as<double>(void)' being compiled
@@ -7,4 +15,5 @@ C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\A
           [
               T=double
           ]
+  Generating Code...
   EvaLanguage.vcxproj -> C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\bin\Debug-x64\EvaLanguage\EvaLanguage.exe
