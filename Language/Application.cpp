@@ -20,11 +20,13 @@ void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int 
 		glfwSetWindowShouldClose(wnd, GLFW_TRUE);
 	}
 
-	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+	
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS && source_code_open == false)
 	{
 		Application::get()->toggleImGuiDemo();
 		Application::get()->toggleColorScheme(++editor_color_scheme % editor_color_scheme_count);
 	}
+	
 }
 
 
@@ -103,32 +105,12 @@ void Application::onImGui()
 				file_creation = true;
 			}
 
-			if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 			if (ImGui::BeginMenu("Open Recent"))
 			{
 				_showRecentlyUsedFiles();
-				if (ImGui::BeginMenu("More.."))
-				{
-					ImGui::MenuItem("Hello");
-					ImGui::MenuItem("Sailor");
-					if (ImGui::BeginMenu("Recurse.."))
-					{
-						ImGui::EndMenu();
-					}
-					ImGui::EndMenu();
-				}
+
 				ImGui::EndMenu();
 			}
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Edit"))
-		{
-			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -257,6 +239,13 @@ bool Application::startUp(const std::string& title, int width, int height, bool 
 		jsonout << out;
 		jsonout.close();
 	}
+	else
+	{
+		// There exist one, so store count of files.
+		json in;
+		file >> in;
+		file_count = in.size();
+	}
 
 	return true;
 }
@@ -326,7 +315,7 @@ void Application::_newFileDialog()
 			file_count++;
 
 
-			cout << "File created: " << path + name << endl;
+			cout << file_count << ".) File created: " << path + name << endl;
 
 
 			// Store file in recently used.

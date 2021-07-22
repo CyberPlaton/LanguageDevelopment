@@ -1,0 +1,7 @@
+def main():
+    helper.define_main()
+
+	a = 23
+	b = 12
+	
+	a + b
