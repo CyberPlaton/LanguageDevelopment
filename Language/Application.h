@@ -76,6 +76,14 @@ public:
 	*/
 	void toggleImGuiDemo();
 
+	/*
+	* Change color scheme of the editor.
+	*/
+	void toggleColorScheme(int n);
+
+public:
+	ImVec4 cyberpunk_color_scheme[53];
+	float clear_color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
 private:
 
@@ -97,7 +105,7 @@ private:
 private:
 
 	bool _initImGui();
-
+	bool _initStyles();
 
 	Application()
 	{

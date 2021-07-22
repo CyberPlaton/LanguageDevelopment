@@ -21,6 +21,7 @@ void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int 
 	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 	{
 		Application::get()->toggleImGuiDemo();
+		Application::get()->toggleColorScheme(0);
 	}
 }
 
@@ -62,8 +63,6 @@ int Application::run()
 void Application::toggleImGuiDemo()
 {
 	show_demo_window = (show_demo_window == true) ? false : true;
-	source_code_open = (source_code_open == true) ? false : true;
-	console_window = (console_window == true) ? false : true;
 }
 
 void Application::onImGui()
@@ -71,8 +70,9 @@ void Application::onImGui()
 	using namespace std;
 
 	if (show_demo_window)
+	{
 		ImGui::ShowDemoWindow(&show_demo_window);
-
+	}
 
 	
 
@@ -223,7 +223,7 @@ bool Application::startUp(const std::string& title, int width, int height, bool 
 	glfwSetCursorPos(window, width / 2.0, height / 2.0);
 
 
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]);
 	glViewport(0, 0, width, height);
 	glfwSwapInterval(1);
 
@@ -291,6 +291,7 @@ bool Application::_initImGui()
 	ImGui::CaptureKeyboardFromApp(true);
 
 
+	return (_initStyles());
 }
 
 
@@ -386,10 +387,143 @@ void Application::_showRecentlyUsedFiles()
 			}
 
 
+			// Set current worked file and open it
 			currently_worked_file = path;
+			source_code_open = true;
 
 
 			code.close();
 		}
 	}
+}
+
+
+bool Application::_initStyles()
+{
+	cyberpunk_color_scheme[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_WindowBg] = ImVec4(0.07f, 0.00f, 0.22f, 0.94f);
+	cyberpunk_color_scheme[ImGuiCol_ChildBg] = ImVec4(0.05f, 0.00f, 0.17f, 0.00f);
+	cyberpunk_color_scheme[ImGuiCol_PopupBg] = ImVec4(0.02f, 0.00f, 0.17f, 0.94f);
+	cyberpunk_color_scheme[ImGuiCol_Border] = ImVec4(0.16f, 0.00f, 0.32f, 0.50f);
+	cyberpunk_color_scheme[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	cyberpunk_color_scheme[ImGuiCol_FrameBg] = ImVec4(0.00f, 0.36f, 0.40f, 0.54f);
+	cyberpunk_color_scheme[ImGuiCol_FrameBgHovered] = ImVec4(0.82f, 0.26f, 0.98f, 0.40f);
+	cyberpunk_color_scheme[ImGuiCol_FrameBgActive] = ImVec4(0.89f, 0.26f, 0.98f, 0.67f);
+	cyberpunk_color_scheme[ImGuiCol_TitleBg] = ImVec4(0.05f, 0.00f, 0.26f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TitleBgActive] = ImVec4(0.16f, 0.29f, 0.48f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+	cyberpunk_color_scheme[ImGuiCol_MenuBarBg] = ImVec4(0.07f, 0.00f, 0.25f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	cyberpunk_color_scheme[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_CheckMark] = ImVec4(0.38f, 0.78f, 1.00f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.70f, 0.88f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.82f, 0.98f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_Button] = ImVec4(0.29f, 0.26f, 0.98f, 0.40f);
+	cyberpunk_color_scheme[ImGuiCol_ButtonHovered] = ImVec4(0.82f, 0.26f, 0.98f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_ButtonActive] = ImVec4(0.80f, 0.06f, 0.98f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_Header] = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
+	cyberpunk_color_scheme[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+	cyberpunk_color_scheme[ImGuiCol_HeaderActive] = ImVec4(0.79f, 0.26f, 0.98f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_Separator] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+	cyberpunk_color_scheme[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+	cyberpunk_color_scheme[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+	cyberpunk_color_scheme[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	cyberpunk_color_scheme[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	cyberpunk_color_scheme[ImGuiCol_Tab] = ImVec4(0.18f, 0.35f, 0.58f, 0.86f);
+	cyberpunk_color_scheme[ImGuiCol_TabHovered] = ImVec4(0.26f, 0.30f, 0.98f, 0.80f);
+	cyberpunk_color_scheme[ImGuiCol_TabActive] = ImVec4(0.67f, 0.20f, 0.68f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TabUnfocused] = ImVec4(0.07f, 0.10f, 0.15f, 0.97f);
+	cyberpunk_color_scheme[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.26f, 0.42f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	cyberpunk_color_scheme[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+	cyberpunk_color_scheme[ImGuiCol_TextSelectedBg] = ImVec4(0.77f, 0.26f, 0.98f, 0.35f);
+	cyberpunk_color_scheme[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+	cyberpunk_color_scheme[ImGuiCol_NavHighlight] = ImVec4(0.77f, 0.26f, 0.98f, 1.00f);
+	cyberpunk_color_scheme[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	cyberpunk_color_scheme[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+	cyberpunk_color_scheme[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+
+	return true;
+}
+
+
+void Application::toggleColorScheme(int n)
+{
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	switch (n)
+	{
+	case 0:
+
+		// Change Background color.
+		glClearColor(43.0f / 255.0f, 42.0f / 255.0f, 92.0f / 255.0f, clear_color[3]);
+
+		style.Colors[ImGuiCol_Text] = cyberpunk_color_scheme[ImGuiCol_Text];
+		style.Colors[ImGuiCol_TextDisabled] = cyberpunk_color_scheme[ImGuiCol_TextDisabled];
+		style.Colors[ImGuiCol_WindowBg] = cyberpunk_color_scheme[ImGuiCol_WindowBg];
+		style.Colors[ImGuiCol_ChildBg] = cyberpunk_color_scheme[ImGuiCol_ChildBg];
+		style.Colors[ImGuiCol_PopupBg] = cyberpunk_color_scheme[ImGuiCol_PopupBg];
+		style.Colors[ImGuiCol_Border] = cyberpunk_color_scheme[ImGuiCol_Border];
+		style.Colors[ImGuiCol_BorderShadow] = cyberpunk_color_scheme[ImGuiCol_BorderShadow];
+		style.Colors[ImGuiCol_FrameBg] = cyberpunk_color_scheme[ImGuiCol_FrameBg];
+		style.Colors[ImGuiCol_FrameBgHovered] = cyberpunk_color_scheme[ImGuiCol_FrameBgHovered];
+		style.Colors[ImGuiCol_FrameBgActive] = cyberpunk_color_scheme[ImGuiCol_FrameBgActive];
+		style.Colors[ImGuiCol_TitleBg] = cyberpunk_color_scheme[ImGuiCol_TitleBg];
+		style.Colors[ImGuiCol_TitleBgActive] = cyberpunk_color_scheme[ImGuiCol_TitleBgActive];
+		style.Colors[ImGuiCol_TitleBgCollapsed] = cyberpunk_color_scheme[ImGuiCol_TitleBgCollapsed];
+		style.Colors[ImGuiCol_MenuBarBg] = cyberpunk_color_scheme[ImGuiCol_MenuBarBg];
+		style.Colors[ImGuiCol_ScrollbarBg] = cyberpunk_color_scheme[ImGuiCol_ScrollbarBg];
+		style.Colors[ImGuiCol_ScrollbarGrab] = cyberpunk_color_scheme[ImGuiCol_ScrollbarGrab];
+		style.Colors[ImGuiCol_ScrollbarGrabHovered] = cyberpunk_color_scheme[ImGuiCol_ScrollbarGrabHovered];
+		style.Colors[ImGuiCol_ScrollbarGrabActive] = cyberpunk_color_scheme[ImGuiCol_ScrollbarGrabActive];
+		style.Colors[ImGuiCol_CheckMark] = cyberpunk_color_scheme[ImGuiCol_CheckMark];
+		style.Colors[ImGuiCol_SliderGrab] = cyberpunk_color_scheme[ImGuiCol_SliderGrab];
+		style.Colors[ImGuiCol_SliderGrabActive] = cyberpunk_color_scheme[ImGuiCol_SliderGrabActive];
+		style.Colors[ImGuiCol_Button] = cyberpunk_color_scheme[ImGuiCol_Button];
+		style.Colors[ImGuiCol_ButtonHovered] = cyberpunk_color_scheme[ImGuiCol_ButtonHovered];
+		style.Colors[ImGuiCol_ButtonActive] = cyberpunk_color_scheme[ImGuiCol_ButtonActive];
+		style.Colors[ImGuiCol_Header] = cyberpunk_color_scheme[ImGuiCol_Header];
+		style.Colors[ImGuiCol_HeaderHovered] = cyberpunk_color_scheme[ImGuiCol_HeaderHovered];
+		style.Colors[ImGuiCol_HeaderActive] = cyberpunk_color_scheme[ImGuiCol_HeaderActive];
+		style.Colors[ImGuiCol_Separator] = cyberpunk_color_scheme[ImGuiCol_Separator];
+		style.Colors[ImGuiCol_SeparatorHovered] = cyberpunk_color_scheme[ImGuiCol_SeparatorHovered];
+		style.Colors[ImGuiCol_SeparatorActive] = cyberpunk_color_scheme[ImGuiCol_SeparatorActive];
+		style.Colors[ImGuiCol_ResizeGrip] = cyberpunk_color_scheme[ImGuiCol_ResizeGrip];
+		style.Colors[ImGuiCol_ResizeGripHovered] = cyberpunk_color_scheme[ImGuiCol_ResizeGripHovered];
+		style.Colors[ImGuiCol_ResizeGripActive] = cyberpunk_color_scheme[ImGuiCol_ResizeGripActive];
+		style.Colors[ImGuiCol_Tab] = cyberpunk_color_scheme[ImGuiCol_Tab];
+		style.Colors[ImGuiCol_TabHovered] = cyberpunk_color_scheme[ImGuiCol_TabHovered];
+		style.Colors[ImGuiCol_TabActive] = cyberpunk_color_scheme[ImGuiCol_TabActive];
+		style.Colors[ImGuiCol_TabUnfocused] = cyberpunk_color_scheme[ImGuiCol_TabUnfocused];
+		style.Colors[ImGuiCol_TabUnfocusedActive] = cyberpunk_color_scheme[ImGuiCol_TabUnfocusedActive];
+		style.Colors[ImGuiCol_PlotLines] = cyberpunk_color_scheme[ImGuiCol_PlotLines];
+		style.Colors[ImGuiCol_PlotLinesHovered] = cyberpunk_color_scheme[ImGuiCol_PlotLinesHovered];
+		style.Colors[ImGuiCol_PlotHistogram] = cyberpunk_color_scheme[ImGuiCol_PlotHistogram];
+		style.Colors[ImGuiCol_PlotHistogramHovered] = cyberpunk_color_scheme[ImGuiCol_PlotHistogramHovered];
+		style.Colors[ImGuiCol_TableHeaderBg] = cyberpunk_color_scheme[ImGuiCol_TableHeaderBg];
+		style.Colors[ImGuiCol_TableBorderStrong] = cyberpunk_color_scheme[ImGuiCol_TableBorderStrong];
+		style.Colors[ImGuiCol_TableBorderLight] = cyberpunk_color_scheme[ImGuiCol_TableBorderLight];
+		style.Colors[ImGuiCol_TableRowBg] = cyberpunk_color_scheme[ImGuiCol_TableRowBg];
+		style.Colors[ImGuiCol_TableRowBgAlt] = cyberpunk_color_scheme[ImGuiCol_TableRowBgAlt];
+		style.Colors[ImGuiCol_TextSelectedBg] = cyberpunk_color_scheme[ImGuiCol_TextSelectedBg];
+		style.Colors[ImGuiCol_DragDropTarget] = cyberpunk_color_scheme[ImGuiCol_DragDropTarget];
+		style.Colors[ImGuiCol_NavHighlight] = cyberpunk_color_scheme[ImGuiCol_NavHighlight];
+		style.Colors[ImGuiCol_NavWindowingHighlight] = cyberpunk_color_scheme[ImGuiCol_NavWindowingHighlight];
+		style.Colors[ImGuiCol_NavWindowingDimBg] = cyberpunk_color_scheme[ImGuiCol_NavWindowingDimBg];
+		style.Colors[ImGuiCol_ModalWindowDimBg] = cyberpunk_color_scheme[ImGuiCol_ModalWindowDimBg];
+		break;
+	}
+
 }
