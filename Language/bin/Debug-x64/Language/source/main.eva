@@ -5,3 +5,6 @@ def main():
 	b = 12
 	
 	a + b
+
+def main_helper():
+	return true

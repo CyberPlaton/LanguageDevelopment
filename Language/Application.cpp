@@ -121,37 +121,46 @@ void Application::onImGui()
 
 
 
-
-	if (source_code_open)
-	{		
-		if (!currently_worked_file.empty())
+	// Worked files
+	bool any_source_open = false;
+	for (auto& file : worked_source_files)
+	{
+		if (file.second->currently_open)
 		{
+			any_source_open = true;
 
-			if (ImGui::Begin(currently_worked_file.c_str(), &source_code_open))
+			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+			ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
+			if (ImGui::Begin(file.first.c_str(), &file.second->currently_open))
 			{
-				ImGui::InputTextMultiline("source", this->source_input, IM_ARRAYSIZE(this->source_input), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+				ImGui::InputTextMultiline("source", file.second->buffer, IM_ARRAYSIZE(file.second->buffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+
 
 				if (ImGui::Button("Save", ImVec2(100.0f, 20.0f)))
 				{
 					// Export source to file.
-					std::ofstream outfile(currently_worked_file, std::ios::binary);
-					outfile << this->source_input;
+					std::ofstream outfile(file.first, std::ios::binary);
+					outfile << file.second->buffer;
 					outfile.close();
 
 
-					cout << this->source_input << endl;
+					cout << file.second->buffer << endl;
+					file.second->saved = true;
+					file.second->prev_size = file.second->size();
 				}
 
 				if (ImGui::Button("Eval", ImVec2(100.0f, 20.0f)))
 				{
+					// Send file to evaluation.
 					cout << "Not Implemented" << endl;
 				}
-			}
 
-			ImGui::End();
+				ImGui::End();
+			}
 		}
-		
+
 	}
+	source_code_open = any_source_open;
 }
 
 
@@ -228,6 +237,7 @@ bool Application::startUp(const std::string& title, int width, int height, bool 
 
 
 	using namespace nlohmann;
+	using namespace std;
 	
 	// Try import recently used files.
 	std::ifstream file(recently_used_files_path, std::ios::in);
@@ -245,6 +255,34 @@ bool Application::startUp(const std::string& title, int width, int height, bool 
 		json in;
 		file >> in;
 		file_count = in.size();
+
+		// Then read the files and load into our source file buffers.
+		for (auto& entry : in)
+		{
+			std::ifstream code(entry.get<std::string>(), std::ios::in);
+			std::string text;
+			std::string line;
+
+			if (!code.is_open())
+			{
+				cout << "Could not open file: " << entry.get<std::string>() << endl;
+			}
+
+			SourceBuffer* buf = new SourceBuffer();
+			buf->currently_open = false;
+
+			while (std::getline(code, line))
+			{
+				text += line + "\n";
+			}
+
+			for (int i = 0; i < text.size(); i++)
+			{
+				buf->buffer[i] = text[i];
+			}
+
+			worked_source_files.emplace(std::make_pair(entry.get<std::string>(), buf));
+		}
 	}
 
 	return true;
@@ -377,8 +415,10 @@ void Application::_showRecentlyUsedFiles()
 
 
 			// Set current worked file and open it
-			currently_worked_file = path;
-			source_code_open = true;
+			worked_source_files.at(path)->currently_open = true;
+
+			//currently_worked_file = path;
+			//source_code_open = true;
 
 
 			code.close();

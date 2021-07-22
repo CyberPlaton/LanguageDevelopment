@@ -26,6 +26,35 @@ void GLMouseMoveCallback(GLFWwindow* wnd, double posX, double posY);
 void GLMouseScrollCallback(GLFWwindow* wnd, double deltaX, double deltaY);
 
 
+struct SourceBuffer
+{
+	SourceBuffer()
+	{
+		memset(&buffer, 0, sizeof(buffer));
+	}
+
+
+	int size()
+	{
+		int r = 0;
+		for (int i = 0; i < sizeof(buffer); i++)
+		{
+			if (buffer[i] == 0) return r;
+
+			r += sizeof(buffer[i]);
+		}
+	}
+
+	char buffer[1024 * 16];
+
+	bool currently_open = false;
+
+	bool saved = false;
+
+	int prev_size = 0;
+};
+
+
 
 class Application
 {
@@ -101,6 +130,9 @@ private:
 	std::string recently_used_files_path = "recently_used_files.json";
 	std::string currently_worked_file;
 	int file_count = 0;
+
+	std::map<std::string, SourceBuffer*> worked_source_files;
+
 
 private:
 

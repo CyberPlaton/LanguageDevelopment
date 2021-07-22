@@ -2,3 +2,7 @@ def define_main():
     a = false
     b = true
     x = 28
+
+def helper():
+    return
+
