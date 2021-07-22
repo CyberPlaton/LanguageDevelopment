@@ -83,7 +83,7 @@ public:
 
 public:
 	ImVec4 cyberpunk_color_scheme[53];
-	float clear_color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	float clear_color[4] = { 0.9f, 0.9f, 0.9f, 1.0f };
 
 private:
 

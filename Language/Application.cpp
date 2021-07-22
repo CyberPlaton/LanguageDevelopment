@@ -6,6 +6,8 @@ static bool source_code_open = false;
 static bool console_window = false;
 static bool new_file_name_specified = false;
 static bool file_creation = false;
+static int editor_color_scheme = 0;
+static const int editor_color_scheme_count = 4;
 
 
 Application* Application::g_Application = nullptr;
@@ -21,7 +23,7 @@ void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int 
 	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
 	{
 		Application::get()->toggleImGuiDemo();
-		Application::get()->toggleColorScheme(0);
+		Application::get()->toggleColorScheme(++editor_color_scheme % editor_color_scheme_count);
 	}
 }
 
@@ -270,9 +272,7 @@ bool Application::_initImGui()
 	io.DisplaySize = ImVec2{ (float)width, (float)height };
 
 
-
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsLight();
 
 
 
@@ -524,6 +524,32 @@ void Application::toggleColorScheme(int n)
 		style.Colors[ImGuiCol_NavWindowingDimBg] = cyberpunk_color_scheme[ImGuiCol_NavWindowingDimBg];
 		style.Colors[ImGuiCol_ModalWindowDimBg] = cyberpunk_color_scheme[ImGuiCol_ModalWindowDimBg];
 		break;
+
+
+
+	case 1:
+		// Change Background color.
+		glClearColor(0.2f, 0.2f, 0.2f, clear_color[3]);
+		ImGui::StyleColorsDark();
+
+		break;
+
+
+	case 2:
+		// Change Background color.
+		glClearColor(250.0f / 255.0f, 250.0f / 255.0f, 250.0f / 255.0f, clear_color[3]);
+		ImGui::StyleColorsLight();
+
+		break;
+
+
+	case 3:
+		// Change Background color.
+		glClearColor(0.2f, 0.2f, 0.2f, clear_color[3]);
+		ImGui::StyleColorsClassic();
+
+		break;
+
 	}
 
 }
