@@ -128,6 +128,19 @@ void Application::onImGui()
 			}
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Options"))
+		{
+			if (ImGui::BeginMenu("FontScale"))
+			{
+				ImGui::SliderFloat("FontScale", &source_font_scale, 1.0f, 2.0f, "%.1f", 1.0f);
+
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -144,11 +157,14 @@ void Application::onImGui()
 		{
 			any_source_open = true;
 
-			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-			ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
-			if (ImGui::Begin(file.first.c_str(), &file.second->currently_open))
+			//ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+			//ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
+			if (ImGui::Begin(file.first.c_str(), &file.second->currently_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
-				ImGui::InputTextMultiline("source", file.second->buffer, IM_ARRAYSIZE(file.second->buffer), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+				// Set custom scale only for textinput line.
+				ImGui::SetWindowFontScale(source_font_scale);
+				ImGui::InputTextMultiline("source", file.second->buffer, IM_ARRAYSIZE(file.second->buffer), ImVec2(source_font_scale * width / 2.0f, height / 2.0f), ImGuiInputTextFlags_AllowTabInput);
+				ImGui::SetWindowFontScale(1.0f);
 
 
 				if (ImGui::Button("Save", ImVec2(100.0f, 20.0f)))

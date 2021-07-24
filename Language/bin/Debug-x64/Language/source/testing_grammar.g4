@@ -17,11 +17,11 @@ m: m '%' f
 	;
 
 
-
+/*Example of how we can hook in functionality from the target language*/
 f: INT
-	| '(' e ')'
+	| '(' e ')'	 { std::cout<< e.text() << std::endl; }
 	;
 
 
-
 INT: [0-9]+;
+
