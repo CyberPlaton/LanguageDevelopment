@@ -16,6 +16,9 @@
     <Filter Include="Header Files\ImGui">
       <UniqueIdentifier>{c426bc73-f005-4ea2-a746-8946d0fd29db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ANTLR">
+      <UniqueIdentifier>{82014234-09e9-420d-907f-2ac3f88266c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +48,18 @@
     <ClCompile Include="common\include\imgui-master\imgui_tables.cpp">
       <Filter>Header Files\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="common\include\ANTLR\generated\Python3Lexer.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
+    <ClCompile Include="common\include\ANTLR\generated\Python3Parser.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
+    <ClCompile Include="common\include\ANTLR\generated\Python3BaseListener.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
+    <ClCompile Include="common\include\ANTLR\generated\Python3Listener.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -73,6 +88,24 @@
     </ClInclude>
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_opengl3.h">
       <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\generated\Python3Lexer.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\generated\Python3Parser.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-common.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-runtime.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\generated\Python3BaseListener.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="common\include\ANTLR\generated\Python3Listener.h">
+      <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

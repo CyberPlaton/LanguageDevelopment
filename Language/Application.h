@@ -21,6 +21,8 @@
 #include <fstream>
 
 
+std::string exec_command(const char* cmd);
+
 void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int mode);
 void GLMouseMoveCallback(GLFWwindow* wnd, double posX, double posY);
 void GLMouseScrollCallback(GLFWwindow* wnd, double deltaX, double deltaY);
@@ -45,7 +47,7 @@ struct SourceBuffer
 		}
 	}
 
-	char buffer[1024 * 16];
+	char buffer[2024 * 16];
 
 	bool currently_open = false;
 
@@ -124,8 +126,8 @@ private:
 	GLFWwindow* window = nullptr;
 
 
-	char source_input[1024 * 16];
-	char file_creation_buf[1024];
+	char source_input[2024 * 16];
+	char file_creation_buf[2024];
 	const char *standard_file_path = "source/";
 	std::string recently_used_files_path = "recently_used_files.json";
 	std::string currently_worked_file;

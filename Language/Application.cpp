@@ -1,5 +1,19 @@
 #include "Application.h"
 
+std::string exec_command(const char* cmd) {
+	std::array<char, 128> buffer;
+	std::string result;
+	std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
+	if (!pipe) {
+		throw std::runtime_error("popen() failed!");
+	}
+	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+		result += buffer.data();
+
+		std::cout << buffer.data() << std::endl;
+	}
+	return result;
+}
 
 static bool show_demo_window = false;
 static bool source_code_open = false;
@@ -78,7 +92,7 @@ void Application::onImGui()
 		ImGui::ShowDemoWindow(&show_demo_window);
 	}
 
-	
+
 
 
 	// Console
@@ -104,6 +118,7 @@ void Application::onImGui()
 			{
 				file_creation = true;
 			}
+
 
 			if (ImGui::BeginMenu("Open Recent"))
 			{
@@ -152,7 +167,21 @@ void Application::onImGui()
 				if (ImGui::Button("Eval", ImVec2(100.0f, 20.0f)))
 				{
 					// Send file to evaluation.
-					cout << "Not Implemented" << endl;
+
+
+					// Check whether the file is a source file or a grammar.
+					if (file.first.find(".g4") != std::string::npos)
+					{
+						// Grammar.
+						cout << "Checking Grammar File (if no error message, then everything OK!)" << endl;
+						std::string cmd = "java -jar source/antlr-4.7-complete.jar -Dlanguage=Cpp -o source/generated/ " + file.first;
+						std::string result = exec_command(cmd.c_str());
+					}
+					else
+					{
+						// Source.
+						cout << "Not Implemented" << endl;
+					}
 				}
 
 				ImGui::End();
@@ -366,6 +395,10 @@ void Application::_newFileDialog()
 			std::ofstream jsonout(recently_used_files_path);
 			jsonout << in;
 			jsonout.close();
+
+
+			// Update Worked Source Files.
+			worked_source_files.emplace(std::make_pair(path + name, new SourceBuffer()));
 		}
 		ImGui::End();
 	}

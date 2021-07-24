@@ -16,7 +16,7 @@ C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\A
               T=double
           ]
   Generating code
-  Previous IPDB was built with incompatible compiler, fall back to full compilation.
+  Previous IPDB not found, fall back to full compilation.
   All 1388 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   EvaLanguage.vcxproj -> C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\EvaLanguage\bin\Release-x64\EvaLanguage\EvaLanguage.exe
