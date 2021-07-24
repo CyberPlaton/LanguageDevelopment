@@ -19,7 +19,7 @@ int main()
 	// Check why Release build is not working
 	//
 	//
-	
+	/*
 	using namespace std;
 	string line;
 	ifstream source("source/python.py");
@@ -59,7 +59,7 @@ int main()
 	}
 
 	return 0;
-	
+	*/
 
 
 
