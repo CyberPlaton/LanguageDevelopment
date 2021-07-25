@@ -15,6 +15,7 @@ std::string exec_command(const char* cmd) {
 	return result;
 }
 
+
 static bool show_demo_window = false;
 static bool source_code_open = false;
 static bool console_window = false;
@@ -26,6 +27,9 @@ static bool custom_font_selected = false;
 
 
 Application* Application::g_Application = nullptr;
+AppConsole* Application::g_Console = nullptr;
+
+
 
 
 void GLKeyInputCallback(GLFWwindow* wnd, int key, int scancode, int action, int mode)
@@ -105,7 +109,7 @@ void Application::onImGui()
 	// Console
 	if (console_window)
 	{
-		
+		Application::get()->g_Console->Draw("Console", &console_window);
 	}
 
 
@@ -164,6 +168,18 @@ void Application::onImGui()
 		}
 
 
+
+		if (ImGui::BeginMenu("Debug"))
+		{
+			if (ImGui::MenuItem("Toggle Console"))
+			{
+				console_window = (console_window == true) ? false : true;
+			}
+
+			ImGui::EndMenu();
+		}
+
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -217,6 +233,7 @@ void Application::onImGui()
 					file.second->prev_size = file.second->size();
 				}
 
+				ImGui::SameLine();
 				if (ImGui::Button("Eval", ImVec2(100.0f, 20.0f)))
 				{
 					// Send file to evaluation.
@@ -237,6 +254,16 @@ void Application::onImGui()
 					}
 				}
 
+
+				ImGui::SameLine();
+				if (ImGui::Button("Parse", ImVec2(100.0f, 20.0f)))
+				{
+					// Send current open file to check in parser and lexer.
+					_sendFileToCheck(file.first, console_window);
+				}
+
+
+
 				ImGui::End();
 			}
 		}
@@ -246,6 +273,52 @@ void Application::onImGui()
 
 	
 }
+
+
+
+void Application::_sendFileToCheck(const std::string file, bool app_console_output)
+{
+	using namespace std;
+
+	string line;
+	ifstream source(file.c_str());
+	if (source.is_open())
+	{
+		antlr4::ANTLRInputStream input(source);
+		EvaGrammarLexer lexer(&input);
+		antlr4::CommonTokenStream tokens(&lexer);
+
+
+		tokens.fill();
+		for (auto token : tokens.getTokens())
+		{
+			size_t type = token->getType();
+			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
+
+
+			//cout << token->getText() << "";
+			cout << token->toString();
+			cout << "	Type: " << type_name;
+			cout << "	Value: " << token->getText() << endl;
+
+			if (type_name.compare("NEWLINE") == 0)
+			{
+				cout << endl;
+			}
+		}
+
+
+		EvaGrammarParser parser(&tokens);
+		
+		antlr4::tree::ParseTree* tree = parser.file_input();
+
+		cout << "Concrete Syntax Tree: " << endl;
+		cout << tree->toStringTree(&parser) << endl;
+		source.close();
+	}
+
+}
+
 
 
 
@@ -403,6 +476,7 @@ bool Application::_initImGui()
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
 
+	g_Console = new AppConsole();
 
 	return (_initStyles() && _initFonts());
 }

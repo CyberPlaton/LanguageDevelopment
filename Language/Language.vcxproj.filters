@@ -48,16 +48,16 @@
     <ClCompile Include="common\include\imgui-master\imgui_tables.cpp">
       <Filter>Header Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="common\include\ANTLR\generated\Python3Lexer.cpp">
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.cpp">
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
-    <ClCompile Include="common\include\ANTLR\generated\Python3Parser.cpp">
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.cpp">
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
-    <ClCompile Include="common\include\ANTLR\generated\Python3BaseListener.cpp">
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.cpp">
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
-    <ClCompile Include="common\include\ANTLR\generated\Python3Listener.cpp">
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.cpp">
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,22 +89,22 @@
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_opengl3.h">
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="common\include\ANTLR\generated\Python3Lexer.h">
-      <Filter>Header Files\ANTLR</Filter>
-    </ClInclude>
-    <ClInclude Include="common\include\ANTLR\generated\Python3Parser.h">
-      <Filter>Header Files\ANTLR</Filter>
-    </ClInclude>
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-common.h">
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-runtime.h">
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
-    <ClInclude Include="common\include\ANTLR\generated\Python3BaseListener.h">
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.h">
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
-    <ClInclude Include="common\include\ANTLR\generated\Python3Listener.h">
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.h">
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
   </ItemGroup>

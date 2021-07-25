@@ -1,16 +1,6 @@
 
 #include "Application.h"
 
-#include <vector>
-#include <any>
-#include <iostream>
-
-#pragma comment(lib, "antlr4-runtime.lib")
-#include "ANTLR/antlr4-runtime/antlr4-runtime.h"
-#include "ANTLR/generated/Python3Lexer.h"
-#include "ANTLR/generated/Python3Parser.h"
-
-
 
 
 int main()
@@ -22,7 +12,7 @@ int main()
 	/*
 	using namespace std;
 	string line;
-	ifstream source("source/python.py");
+	ifstream source("source/python_test.py");
 	if (source.is_open())
 	{
 		antlr4::ANTLRInputStream input(source);
@@ -60,7 +50,6 @@ int main()
 
 	return 0;
 	*/
-
 
 
 	Application* app = Application::get();

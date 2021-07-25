@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\ANTLR\antlr4-runtime;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master\examples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\bin\Debug-x64\Language\source\generated;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\ANTLR\antlr4-runtime;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master\examples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +138,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\ANTLR\antlr4-runtime;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master\examples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\bin\Debug-x64\Language\source\generated;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\ANTLR\antlr4-runtime;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master;C:\Users\Bogdan Strohonov\Desktop\Language Development\EvaLanguage\Language\common\include\imgui-master\examples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,10 +150,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="common\include\ANTLR\generated\Python3BaseListener.cpp" />
-    <ClCompile Include="common\include\ANTLR\generated\Python3Lexer.cpp" />
-    <ClCompile Include="common\include\ANTLR\generated\Python3Listener.cpp" />
-    <ClCompile Include="common\include\ANTLR\generated\Python3Parser.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.cpp" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui.cpp" />
@@ -165,12 +165,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.h" />
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-common.h" />
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-runtime.h" />
-    <ClInclude Include="common\include\ANTLR\generated\Python3BaseListener.h" />
-    <ClInclude Include="common\include\ANTLR\generated\Python3Lexer.h" />
-    <ClInclude Include="common\include\ANTLR\generated\Python3Listener.h" />
-    <ClInclude Include="common\include\ANTLR\generated\Python3Parser.h" />
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_glfw.h" />
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_opengl3.h" />
     <ClInclude Include="common\include\imgui-master\imconfig.h" />
