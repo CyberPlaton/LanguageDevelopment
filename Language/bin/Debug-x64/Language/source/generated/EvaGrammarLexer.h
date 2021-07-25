@@ -12,7 +12,8 @@
 class  EvaGrammarLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, INT = 6, NEWLINE = 7
+    T__0 = 1, T__1 = 2, INT = 3, NEWLINE = 4, WS = 5, MUL = 6, PLUS = 7, 
+    MINUS = 8, DIVIDE = 9, MOD = 10
   };
 
   EvaGrammarLexer(antlr4::CharStream *input);

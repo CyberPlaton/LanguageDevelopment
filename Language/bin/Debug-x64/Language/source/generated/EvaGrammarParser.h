@@ -12,7 +12,8 @@
 class  EvaGrammarParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, INT = 6, NEWLINE = 7
+    T__0 = 1, T__1 = 2, INT = 3, NEWLINE = 4, WS = 5, MUL = 6, PLUS = 7, 
+    MINUS = 8, DIVIDE = 9, MOD = 10
   };
 
   enum {
@@ -37,7 +38,6 @@ public:
   class MContext;
   class FContext; 
 
-public:
   class  File_inputContext : public antlr4::ParserRuleContext {
   public:
     File_inputContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -75,6 +75,8 @@ public:
     virtual size_t getRuleIndex() const override;
     TContext *t();
     EContext *e();
+    antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -89,6 +91,8 @@ public:
     virtual size_t getRuleIndex() const override;
     MContext *m();
     TContext *t();
+    antlr4::tree::TerminalNode *MUL();
+    antlr4::tree::TerminalNode *DIVIDE();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -103,6 +107,7 @@ public:
     virtual size_t getRuleIndex() const override;
     FContext *f();
     MContext *m();
+    antlr4::tree::TerminalNode *MOD();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

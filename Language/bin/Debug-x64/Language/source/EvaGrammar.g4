@@ -10,17 +10,17 @@ single_input: NEWLINE
 
 
 /*Parser Rules*/
-e: e '+' t
+e: e (PLUS | MINUS) t
 	| t
 	;
 
 
-t: t '*' m
+t: t (MUL | DIVIDE) m
 	| m
 	;
 
 
-m: m '%' f
+m: m MOD f
 	| f
 	;
 
@@ -34,3 +34,12 @@ f: INT
 INT: [0-9]+;
 
 NEWLINE: [\r\n] -> skip;
+WS: [' ' | \t] -> skip;
+
+
+/*Lexer Definitions*/ 
+MUL: '*';
+PLUS: '+';
+MINUS: '-';
+DIVIDE: '/';
+MOD: '%';

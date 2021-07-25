@@ -282,11 +282,14 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 
 	string line;
 	ifstream source(file.c_str());
+	g_Console->AddLog(("[info] Parsing result for \"" + file + "\"").c_str());
 	if (source.is_open())
 	{
 		antlr4::ANTLRInputStream input(source);
 		EvaGrammarLexer lexer(&input);
 		antlr4::CommonTokenStream tokens(&lexer);
+
+		std::string token_text_line;
 
 
 		tokens.fill();
@@ -296,24 +299,30 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
 
 
-			//cout << token->getText() << "";
-			cout << token->toString();
-			cout << "	Type: " << type_name;
-			cout << "	Value: " << token->getText() << endl;
+			token_text_line = "Type: " + type_name + " Value: " + token->getText();
 
 			if (type_name.compare("NEWLINE") == 0)
 			{
-				cout << endl;
+
 			}
+
+			g_Console->AddLog(token_text_line.c_str());
 		}
 
 
 		EvaGrammarParser parser(&tokens);
+
 		
 		antlr4::tree::ParseTree* tree = parser.file_input();
 
-		cout << "Concrete Syntax Tree: " << endl;
-		cout << tree->toStringTree(&parser) << endl;
+		//cout << "Concrete Syntax Tree: " << endl;
+		//cout << tree->toStringTree(&parser) << endl;
+
+		token_text_line = tree->toStringTree(&parser, true);
+
+		g_Console->AddLog("[info] Concrete Syntax Tree: ");
+		g_Console->AddLog(token_text_line.c_str());
+
 		source.close();
 	}
 
