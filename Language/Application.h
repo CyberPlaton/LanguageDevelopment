@@ -135,12 +135,16 @@ private:
 
 	std::map<std::string, SourceBuffer*> worked_source_files;
 
+
 	float source_font_scale = 1.0f;
+	std::map<std::string, ImFont*> fonts;
+	std::string current_font_selected;
 
 private:
 
 	bool _initImGui();
 	bool _initStyles();
+	bool _initFonts();
 
 	Application()
 	{

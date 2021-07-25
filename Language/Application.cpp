@@ -22,6 +22,7 @@ static bool new_file_name_specified = false;
 static bool file_creation = false;
 static int editor_color_scheme = 0;
 static const int editor_color_scheme_count = 4;
+static bool custom_font_selected = false;
 
 
 Application* Application::g_Application = nullptr;
@@ -62,13 +63,19 @@ int Application::run()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		
+		
 		onImGui();
+
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // Display it.
 		ImGui::EndFrame();
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -129,7 +136,7 @@ void Application::onImGui()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Options"))
+		if (ImGui::BeginMenu("Settings"))
 		{
 			if (ImGui::BeginMenu("FontScale"))
 			{
@@ -137,6 +144,22 @@ void Application::onImGui()
 
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Fonts"))
+			{
+				for (auto& font : fonts)
+				{
+					if (ImGui::MenuItem(font.first.c_str()))
+					{
+						current_font_selected = font.first;
+						custom_font_selected = true;
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+
+
 			ImGui::EndMenu();
 		}
 
@@ -161,10 +184,24 @@ void Application::onImGui()
 			//ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
 			if (ImGui::Begin(file.first.c_str(), &file.second->currently_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 			{
+				// Set Custom Font for source input.
+				if (custom_font_selected)
+				{
+					ImGui::PushFont(fonts.at(current_font_selected));
+				}
+
+
 				// Set custom scale only for textinput line.
 				ImGui::SetWindowFontScale(source_font_scale);
 				ImGui::InputTextMultiline("source", file.second->buffer, IM_ARRAYSIZE(file.second->buffer), ImVec2(source_font_scale * width / 2.0f, height / 2.0f), ImGuiInputTextFlags_AllowTabInput);
 				ImGui::SetWindowFontScale(1.0f);
+
+
+
+				if (custom_font_selected)
+				{
+					ImGui::PopFont();
+				}
 
 
 				if (ImGui::Button("Save", ImVec2(100.0f, 20.0f)))
@@ -206,7 +243,11 @@ void Application::onImGui()
 
 	}
 	source_code_open = any_source_open;
+
+	
 }
+
+
 
 
 
@@ -363,7 +404,7 @@ bool Application::_initImGui()
 	ImGui::CaptureKeyboardFromApp(true);
 
 
-	return (_initStyles());
+	return (_initStyles() && _initFonts());
 }
 
 
@@ -630,4 +671,28 @@ void Application::toggleColorScheme(int n)
 
 	}
 
+}
+
+
+
+bool Application::_initFonts()
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	ImFont* f = io.Fonts->AddFontFromFileTTF("fonts/ProggyClean.ttf", 15.0f);
+	fonts.emplace(std::make_pair("ProggyClean", f));
+
+	f = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Medium.ttf", 15.0f);
+	fonts.emplace(std::make_pair("Roboto-Medium", f));
+
+	f = io.Fonts->AddFontFromFileTTF("fonts/Cousine-Regular.ttf", 15.0f);
+	fonts.emplace(std::make_pair("Cousine-Regular", f));
+
+	f = io.Fonts->AddFontFromFileTTF("fonts/DroidSans.ttf", 15.0f);
+	fonts.emplace(std::make_pair("DroidSans", f));
+
+	f = io.Fonts->AddFontFromFileTTF("fonts/Karla-Regular.ttf", 15.0f);
+	fonts.emplace(std::make_pair("Karla-Regular", f));
+
+	return true;
 }
