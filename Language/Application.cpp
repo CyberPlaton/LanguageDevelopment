@@ -255,14 +255,17 @@ void Application::onImGui()
 				}
 
 
-				ImGui::SameLine();
-				if (ImGui::Button("Parse", ImVec2(100.0f, 20.0f)))
+				// Display Parsing option only for NON-GRAMMAR files.
+				if(file.first.find(".g4") == std::string::npos)
 				{
-					// Send current open file to check in parser and lexer.
-					_sendFileToCheck(file.first, console_window);
+					ImGui::SameLine();
+					if (ImGui::Button("Parse", ImVec2(100.0f, 20.0f)))
+					{
+						// Send current open file to check in parser and lexer,
+						// and whether to give output to app console window.
+						_sendFileToCheck(file.first, console_window);
+					}
 				}
-
-
 
 				ImGui::End();
 			}
