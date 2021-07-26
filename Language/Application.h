@@ -195,6 +195,15 @@ private:
 
 struct AppConsole
 {
+    enum Color
+    {
+        RED,
+        GREEN,
+        YELLOW,
+        MAGENTA,
+        BLUE
+    };
+
     char                  InputBuf[256];
     ImVector<char*>       Items;
     ImVector<const char*> Commands;
@@ -224,6 +233,31 @@ struct AppConsole
     static int   Strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
     static char* Strdup(const char* s) { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = malloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
     static void  Strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
+
+
+    static ImVec4 getColorVec(Color col)
+    {
+        switch (col)
+        {
+        case Color::RED:
+            return ImVec4(.8f, .0f, .0f, 1.0f);
+            break;
+        case Color::GREEN:
+            return ImVec4(.0f, .8f, .0f, 1.0f);
+            break;
+        case Color::MAGENTA:
+            return ImVec4(.8f, .0f, .8f, 1.0f);
+            break;
+        case Color::BLUE:
+            return ImVec4(.0f, .0f, .8f, 1.0f);
+            break;
+        case Color::YELLOW:
+            return ImVec4(.8f, .8f, .0f, 1.0f);
+            break;
+        default:
+            return ImVec4(.0f, .0f, .0f, 1.0f);
+        }
+    }
 
     void    ClearLog()
     {
@@ -322,6 +356,7 @@ struct AppConsole
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
         if (copy_to_clipboard)
             ImGui::LogToClipboard();
+        std::string item_string;
         for (int i = 0; i < Items.Size; i++)
         {
             const char* item = Items[i];
@@ -332,12 +367,45 @@ struct AppConsole
             // (e.g. make Items[] an array of structure, store color/type etc.)
             ImVec4 color;
             bool has_color = false;
-            if (strstr(item, "[error]")) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
-            else if (strncmp(item, "# ", 2) == 0) { color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); has_color = true; }
-            else if(strstr(item, "[info]")){ color = ImVec4(0.1f, 0.5f, 0.1f, 1.0f); has_color = true; }
+
+            if(strstr(item, "#R#"))
+            {
+                color = getColorVec(Color::RED); has_color = true;
+                item_string = getItemWithoutColorDefinition(std::string(item));
+                item = item_string.c_str();
+            }
+            else if (strstr(item, "#G#"))
+            {
+                color = getColorVec(Color::GREEN); has_color = true;
+                item_string = getItemWithoutColorDefinition(std::string(item));
+                item = item_string.c_str();
+            }
+            else if (strstr(item, "#B#"))
+            {
+                color = getColorVec(Color::BLUE); has_color = true;
+                item_string = getItemWithoutColorDefinition(std::string(item));
+                item = item_string.c_str();
+            }
+            else if (strstr(item, "#Y#"))
+            {
+                color = getColorVec(Color::YELLOW); has_color = true;
+                item_string = getItemWithoutColorDefinition(std::string(item));
+                item = item_string.c_str();
+            }
+            else if (strstr(item, "#M#"))
+            {
+                color = getColorVec(Color::MAGENTA); has_color = true;
+                item_string = getItemWithoutColorDefinition(std::string(item));
+                item = item_string.c_str();
+            }
+
+
+
             if (has_color)
                 ImGui::PushStyleColor(ImGuiCol_Text, color);
+            
             ImGui::TextUnformatted(item);
+            
             if (has_color)
                 ImGui::PopStyleColor();
         }
@@ -354,6 +422,37 @@ struct AppConsole
 
         ImGui::End();
     }
+
+    // Function does not need to know about color definitions, only the format,
+    // which is encoded and #X# where X is some Character.
+    std::string getItemWithoutColorDefinition(const std::string& item)
+    {
+        std::string item_string = item; // Create a working copy.
+        std::string item_without_color_def;
+
+        int i = 0;
+        while (item_string[i] != '\0') // Iterate through string
+        {
+            // And ignore the color definition: e.g. #R# for red.
+            if (item_string[i] == '#' || (i > 0 && item_string[i - 1] == '#'))
+            {
+
+                i++;
+                continue;
+            }
+            else
+            {
+                // But store the other charachters.
+                item_without_color_def += item_string[i];
+                i++;
+            }
+
+        }
+
+        return item_without_color_def;
+    }
+
+
 
     // Not Implemented
     void    ExecCommand(const char* command_line)

@@ -282,7 +282,7 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 
 	string line;
 	ifstream source(file.c_str());
-	g_Console->AddLog(("[info] Parsing result for \"" + file + "\"").c_str());
+	g_Console->AddLog(("#B# Parsing result for \"" + file + "\"").c_str());
 	if (source.is_open())
 	{
 		antlr4::ANTLRInputStream input(source);
@@ -320,7 +320,7 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 
 		token_text_line = tree->toStringTree(&parser, true);
 
-		g_Console->AddLog("[info] Concrete Syntax Tree: ");
+		g_Console->AddLog("#M# Concrete Syntax Tree: ");
 		g_Console->AddLog(token_text_line.c_str());
 
 		source.close();
