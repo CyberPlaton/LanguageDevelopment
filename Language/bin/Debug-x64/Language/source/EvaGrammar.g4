@@ -1,33 +1,27 @@
 grammar EvaGrammar;
 
 /*Starting Rules*/
-file_input: (NEWLINE | e)* EOF;
+program: (NEWLINE | expr)* EOF;
 
 single_input: NEWLINE
-			| e
-			| e NEWLINE
+			| expr
+			| expr NEWLINE
 			;
 
 
 /*Parser Rules*/
-e: e (PLUS | MINUS) t
-	| t
+expr: expr (PLUS | MINUS) term
+	| term
 	;
 
 
-t: t (MUL | DIVIDE) m
-	| m
+term: term (MUL | DIVIDE) literal
+	| literal
 	;
 
 
-m: m MOD f
-	| f
-	;
-
-
-
-f: INT
-	| '(' e ')'
+literal: INT
+	| '(' expr ')'
 	;
 
 
@@ -42,4 +36,3 @@ MUL: '*';
 PLUS: '+';
 MINUS: '-';
 DIVIDE: '/';
-MOD: '%';

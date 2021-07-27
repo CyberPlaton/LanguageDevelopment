@@ -16,15 +16,7 @@
 #include "common/include/nlohmann/json.hpp"
 
 
-#pragma comment(lib, "antlr4-runtime.lib")
-#include "ANTLR/antlr4-runtime/antlr4-runtime.h"
-//#include "ANTLR/generated/Python3Lexer.h"
-//#include "ANTLR/generated/Python3Parser.h"
-
-
-// Include From Generated Files, thus is updated every time new is created.
-#include "EvaGrammarLexer.h"
-#include "EvaGrammarParser.h"
+#include "ANTLRInterface.h"
 
 
 #include <vector>
@@ -181,10 +173,21 @@ private:
 	void _showRecentlyUsedFiles();
 
     void _sendFileToCheck(const std::string file, bool app_console_output = false);
+
+    bool _sendFileToEval(const std::string& file, bool app_console_output = false);
 };
 
 
 
+
+struct ASTConstructor
+{
+    ASTConstructor(){}
+
+    // Construct an abstract syntax tree from antlr4 concrete syntax tree.
+    bool create(nlohmann::json* j, const std::string& file, bool app_console_output = false);
+
+};
 
 
 

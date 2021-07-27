@@ -13,7 +13,7 @@ class  EvaGrammarLexer : public antlr4::Lexer {
 public:
   enum {
     T__0 = 1, T__1 = 2, INT = 3, NEWLINE = 4, WS = 5, MUL = 6, PLUS = 7, 
-    MINUS = 8, DIVIDE = 9, MOD = 10
+    MINUS = 8, DIVIDE = 9
   };
 
   EvaGrammarLexer(antlr4::CharStream *input);

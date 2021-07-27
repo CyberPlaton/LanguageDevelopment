@@ -3,6 +3,7 @@
 
 
 #include "EvaGrammarListener.h"
+#include "EvaGrammarVisitor.h"
 
 #include "EvaGrammarParser.h"
 
@@ -31,52 +32,60 @@ dfa::Vocabulary& EvaGrammarParser::getVocabulary() const {
 }
 
 
-//----------------- File_inputContext ------------------------------------------------------------------
+//----------------- ProgramContext ------------------------------------------------------------------
 
-EvaGrammarParser::File_inputContext::File_inputContext(ParserRuleContext *parent, size_t invokingState)
+EvaGrammarParser::ProgramContext::ProgramContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-tree::TerminalNode* EvaGrammarParser::File_inputContext::EOF() {
+tree::TerminalNode* EvaGrammarParser::ProgramContext::EOF() {
   return getToken(EvaGrammarParser::EOF, 0);
 }
 
-std::vector<tree::TerminalNode *> EvaGrammarParser::File_inputContext::NEWLINE() {
+std::vector<tree::TerminalNode *> EvaGrammarParser::ProgramContext::NEWLINE() {
   return getTokens(EvaGrammarParser::NEWLINE);
 }
 
-tree::TerminalNode* EvaGrammarParser::File_inputContext::NEWLINE(size_t i) {
+tree::TerminalNode* EvaGrammarParser::ProgramContext::NEWLINE(size_t i) {
   return getToken(EvaGrammarParser::NEWLINE, i);
 }
 
-std::vector<EvaGrammarParser::EContext *> EvaGrammarParser::File_inputContext::e() {
-  return getRuleContexts<EvaGrammarParser::EContext>();
+std::vector<EvaGrammarParser::ExprContext *> EvaGrammarParser::ProgramContext::expr() {
+  return getRuleContexts<EvaGrammarParser::ExprContext>();
 }
 
-EvaGrammarParser::EContext* EvaGrammarParser::File_inputContext::e(size_t i) {
-  return getRuleContext<EvaGrammarParser::EContext>(i);
+EvaGrammarParser::ExprContext* EvaGrammarParser::ProgramContext::expr(size_t i) {
+  return getRuleContext<EvaGrammarParser::ExprContext>(i);
 }
 
 
-size_t EvaGrammarParser::File_inputContext::getRuleIndex() const {
-  return EvaGrammarParser::RuleFile_input;
+size_t EvaGrammarParser::ProgramContext::getRuleIndex() const {
+  return EvaGrammarParser::RuleProgram;
 }
 
-void EvaGrammarParser::File_inputContext::enterRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::ProgramContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterFile_input(this);
+    parserListener->enterProgram(this);
 }
 
-void EvaGrammarParser::File_inputContext::exitRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::ProgramContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitFile_input(this);
+    parserListener->exitProgram(this);
 }
 
-EvaGrammarParser::File_inputContext* EvaGrammarParser::file_input() {
-  File_inputContext *_localctx = _tracker.createInstance<File_inputContext>(_ctx, getState());
-  enterRule(_localctx, 0, EvaGrammarParser::RuleFile_input);
+
+antlrcpp::Any EvaGrammarParser::ProgramContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EvaGrammarVisitor*>(visitor))
+    return parserVisitor->visitProgram(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+EvaGrammarParser::ProgramContext* EvaGrammarParser::program() {
+  ProgramContext *_localctx = _tracker.createInstance<ProgramContext>(_ctx, getState());
+  enterRule(_localctx, 0, EvaGrammarParser::RuleProgram);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -84,37 +93,37 @@ EvaGrammarParser::File_inputContext* EvaGrammarParser::file_input() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(16);
+    setState(14);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & ((1ULL << EvaGrammarParser::T__0)
       | (1ULL << EvaGrammarParser::INT)
       | (1ULL << EvaGrammarParser::NEWLINE))) != 0)) {
-      setState(14);
+      setState(12);
       _errHandler->sync(this);
       switch (_input->LA(1)) {
         case EvaGrammarParser::NEWLINE: {
-          setState(12);
+          setState(10);
           match(EvaGrammarParser::NEWLINE);
           break;
         }
 
         case EvaGrammarParser::T__0:
         case EvaGrammarParser::INT: {
-          setState(13);
-          e(0);
+          setState(11);
+          expr(0);
           break;
         }
 
       default:
         throw NoViableAltException(this);
       }
-      setState(18);
+      setState(16);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(19);
+    setState(17);
     match(EvaGrammarParser::EOF);
    
   }
@@ -137,8 +146,8 @@ tree::TerminalNode* EvaGrammarParser::Single_inputContext::NEWLINE() {
   return getToken(EvaGrammarParser::NEWLINE, 0);
 }
 
-EvaGrammarParser::EContext* EvaGrammarParser::Single_inputContext::e() {
-  return getRuleContext<EvaGrammarParser::EContext>(0);
+EvaGrammarParser::ExprContext* EvaGrammarParser::Single_inputContext::expr() {
+  return getRuleContext<EvaGrammarParser::ExprContext>(0);
 }
 
 
@@ -158,6 +167,14 @@ void EvaGrammarParser::Single_inputContext::exitRule(tree::ParseTreeListener *li
     parserListener->exitSingle_input(this);
 }
 
+
+antlrcpp::Any EvaGrammarParser::Single_inputContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EvaGrammarVisitor*>(visitor))
+    return parserVisitor->visitSingle_input(this);
+  else
+    return visitor->visitChildren(this);
+}
+
 EvaGrammarParser::Single_inputContext* EvaGrammarParser::single_input() {
   Single_inputContext *_localctx = _tracker.createInstance<Single_inputContext>(_ctx, getState());
   enterRule(_localctx, 2, EvaGrammarParser::RuleSingle_input);
@@ -166,28 +183,28 @@ EvaGrammarParser::Single_inputContext* EvaGrammarParser::single_input() {
     exitRule();
   });
   try {
-    setState(26);
+    setState(24);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 2, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(21);
+      setState(19);
       match(EvaGrammarParser::NEWLINE);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(22);
-      e(0);
+      setState(20);
+      expr(0);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(23);
-      e(0);
-      setState(24);
+      setState(21);
+      expr(0);
+      setState(22);
       match(EvaGrammarParser::NEWLINE);
       break;
     }
@@ -204,57 +221,65 @@ EvaGrammarParser::Single_inputContext* EvaGrammarParser::single_input() {
   return _localctx;
 }
 
-//----------------- EContext ------------------------------------------------------------------
+//----------------- ExprContext ------------------------------------------------------------------
 
-EvaGrammarParser::EContext::EContext(ParserRuleContext *parent, size_t invokingState)
+EvaGrammarParser::ExprContext::ExprContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-EvaGrammarParser::TContext* EvaGrammarParser::EContext::t() {
-  return getRuleContext<EvaGrammarParser::TContext>(0);
+EvaGrammarParser::TermContext* EvaGrammarParser::ExprContext::term() {
+  return getRuleContext<EvaGrammarParser::TermContext>(0);
 }
 
-EvaGrammarParser::EContext* EvaGrammarParser::EContext::e() {
-  return getRuleContext<EvaGrammarParser::EContext>(0);
+EvaGrammarParser::ExprContext* EvaGrammarParser::ExprContext::expr() {
+  return getRuleContext<EvaGrammarParser::ExprContext>(0);
 }
 
-tree::TerminalNode* EvaGrammarParser::EContext::PLUS() {
+tree::TerminalNode* EvaGrammarParser::ExprContext::PLUS() {
   return getToken(EvaGrammarParser::PLUS, 0);
 }
 
-tree::TerminalNode* EvaGrammarParser::EContext::MINUS() {
+tree::TerminalNode* EvaGrammarParser::ExprContext::MINUS() {
   return getToken(EvaGrammarParser::MINUS, 0);
 }
 
 
-size_t EvaGrammarParser::EContext::getRuleIndex() const {
-  return EvaGrammarParser::RuleE;
+size_t EvaGrammarParser::ExprContext::getRuleIndex() const {
+  return EvaGrammarParser::RuleExpr;
 }
 
-void EvaGrammarParser::EContext::enterRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::ExprContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterE(this);
+    parserListener->enterExpr(this);
 }
 
-void EvaGrammarParser::EContext::exitRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::ExprContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitE(this);
+    parserListener->exitExpr(this);
 }
 
 
-EvaGrammarParser::EContext* EvaGrammarParser::e() {
-   return e(0);
+antlrcpp::Any EvaGrammarParser::ExprContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EvaGrammarVisitor*>(visitor))
+    return parserVisitor->visitExpr(this);
+  else
+    return visitor->visitChildren(this);
 }
 
-EvaGrammarParser::EContext* EvaGrammarParser::e(int precedence) {
+
+EvaGrammarParser::ExprContext* EvaGrammarParser::expr() {
+   return expr(0);
+}
+
+EvaGrammarParser::ExprContext* EvaGrammarParser::expr(int precedence) {
   ParserRuleContext *parentContext = _ctx;
   size_t parentState = getState();
-  EvaGrammarParser::EContext *_localctx = _tracker.createInstance<EContext>(_ctx, parentState);
-  EvaGrammarParser::EContext *previousContext = _localctx;
+  EvaGrammarParser::ExprContext *_localctx = _tracker.createInstance<ExprContext>(_ctx, parentState);
+  EvaGrammarParser::ExprContext *previousContext = _localctx;
   size_t startState = 4;
-  enterRecursionRule(_localctx, 4, EvaGrammarParser::RuleE, precedence);
+  enterRecursionRule(_localctx, 4, EvaGrammarParser::RuleExpr, precedence);
 
     size_t _la = 0;
 
@@ -264,10 +289,10 @@ EvaGrammarParser::EContext* EvaGrammarParser::e(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(29);
-    t(0);
+    setState(27);
+    term(0);
     _ctx->stop = _input->LT(-1);
-    setState(36);
+    setState(34);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -275,12 +300,12 @@ EvaGrammarParser::EContext* EvaGrammarParser::e(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        _localctx = _tracker.createInstance<EContext>(parentContext, parentState);
-        pushNewRecursionContext(_localctx, startState, RuleE);
-        setState(31);
+        _localctx = _tracker.createInstance<ExprContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleExpr);
+        setState(29);
 
         if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-        setState(32);
+        setState(30);
         _la = _input->LA(1);
         if (!(_la == EvaGrammarParser::PLUS
 
@@ -291,10 +316,10 @@ EvaGrammarParser::EContext* EvaGrammarParser::e(int precedence) {
           _errHandler->reportMatch(this);
           consume();
         }
-        setState(33);
-        t(0); 
+        setState(31);
+        term(0); 
       }
-      setState(38);
+      setState(36);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 3, _ctx);
     }
@@ -307,57 +332,65 @@ EvaGrammarParser::EContext* EvaGrammarParser::e(int precedence) {
   return _localctx;
 }
 
-//----------------- TContext ------------------------------------------------------------------
+//----------------- TermContext ------------------------------------------------------------------
 
-EvaGrammarParser::TContext::TContext(ParserRuleContext *parent, size_t invokingState)
+EvaGrammarParser::TermContext::TermContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-EvaGrammarParser::MContext* EvaGrammarParser::TContext::m() {
-  return getRuleContext<EvaGrammarParser::MContext>(0);
+EvaGrammarParser::LiteralContext* EvaGrammarParser::TermContext::literal() {
+  return getRuleContext<EvaGrammarParser::LiteralContext>(0);
 }
 
-EvaGrammarParser::TContext* EvaGrammarParser::TContext::t() {
-  return getRuleContext<EvaGrammarParser::TContext>(0);
+EvaGrammarParser::TermContext* EvaGrammarParser::TermContext::term() {
+  return getRuleContext<EvaGrammarParser::TermContext>(0);
 }
 
-tree::TerminalNode* EvaGrammarParser::TContext::MUL() {
+tree::TerminalNode* EvaGrammarParser::TermContext::MUL() {
   return getToken(EvaGrammarParser::MUL, 0);
 }
 
-tree::TerminalNode* EvaGrammarParser::TContext::DIVIDE() {
+tree::TerminalNode* EvaGrammarParser::TermContext::DIVIDE() {
   return getToken(EvaGrammarParser::DIVIDE, 0);
 }
 
 
-size_t EvaGrammarParser::TContext::getRuleIndex() const {
-  return EvaGrammarParser::RuleT;
+size_t EvaGrammarParser::TermContext::getRuleIndex() const {
+  return EvaGrammarParser::RuleTerm;
 }
 
-void EvaGrammarParser::TContext::enterRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::TermContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterT(this);
+    parserListener->enterTerm(this);
 }
 
-void EvaGrammarParser::TContext::exitRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::TermContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitT(this);
+    parserListener->exitTerm(this);
 }
 
 
-EvaGrammarParser::TContext* EvaGrammarParser::t() {
-   return t(0);
+antlrcpp::Any EvaGrammarParser::TermContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EvaGrammarVisitor*>(visitor))
+    return parserVisitor->visitTerm(this);
+  else
+    return visitor->visitChildren(this);
 }
 
-EvaGrammarParser::TContext* EvaGrammarParser::t(int precedence) {
+
+EvaGrammarParser::TermContext* EvaGrammarParser::term() {
+   return term(0);
+}
+
+EvaGrammarParser::TermContext* EvaGrammarParser::term(int precedence) {
   ParserRuleContext *parentContext = _ctx;
   size_t parentState = getState();
-  EvaGrammarParser::TContext *_localctx = _tracker.createInstance<TContext>(_ctx, parentState);
-  EvaGrammarParser::TContext *previousContext = _localctx;
+  EvaGrammarParser::TermContext *_localctx = _tracker.createInstance<TermContext>(_ctx, parentState);
+  EvaGrammarParser::TermContext *previousContext = _localctx;
   size_t startState = 6;
-  enterRecursionRule(_localctx, 6, EvaGrammarParser::RuleT, precedence);
+  enterRecursionRule(_localctx, 6, EvaGrammarParser::RuleTerm, precedence);
 
     size_t _la = 0;
 
@@ -367,10 +400,10 @@ EvaGrammarParser::TContext* EvaGrammarParser::t(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(40);
-    m(0);
+    setState(38);
+    literal();
     _ctx->stop = _input->LT(-1);
-    setState(47);
+    setState(45);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -378,12 +411,12 @@ EvaGrammarParser::TContext* EvaGrammarParser::t(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        _localctx = _tracker.createInstance<TContext>(parentContext, parentState);
-        pushNewRecursionContext(_localctx, startState, RuleT);
-        setState(42);
+        _localctx = _tracker.createInstance<TermContext>(parentContext, parentState);
+        pushNewRecursionContext(_localctx, startState, RuleTerm);
+        setState(40);
 
         if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-        setState(43);
+        setState(41);
         _la = _input->LA(1);
         if (!(_la == EvaGrammarParser::MUL
 
@@ -394,10 +427,10 @@ EvaGrammarParser::TContext* EvaGrammarParser::t(int precedence) {
           _errHandler->reportMatch(this);
           consume();
         }
-        setState(44);
-        m(0); 
+        setState(42);
+        literal(); 
       }
-      setState(49);
+      setState(47);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx);
     }
@@ -410,152 +443,70 @@ EvaGrammarParser::TContext* EvaGrammarParser::t(int precedence) {
   return _localctx;
 }
 
-//----------------- MContext ------------------------------------------------------------------
+//----------------- LiteralContext ------------------------------------------------------------------
 
-EvaGrammarParser::MContext::MContext(ParserRuleContext *parent, size_t invokingState)
+EvaGrammarParser::LiteralContext::LiteralContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-EvaGrammarParser::FContext* EvaGrammarParser::MContext::f() {
-  return getRuleContext<EvaGrammarParser::FContext>(0);
-}
-
-EvaGrammarParser::MContext* EvaGrammarParser::MContext::m() {
-  return getRuleContext<EvaGrammarParser::MContext>(0);
-}
-
-tree::TerminalNode* EvaGrammarParser::MContext::MOD() {
-  return getToken(EvaGrammarParser::MOD, 0);
-}
-
-
-size_t EvaGrammarParser::MContext::getRuleIndex() const {
-  return EvaGrammarParser::RuleM;
-}
-
-void EvaGrammarParser::MContext::enterRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->enterM(this);
-}
-
-void EvaGrammarParser::MContext::exitRule(tree::ParseTreeListener *listener) {
-  auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
-  if (parserListener != nullptr)
-    parserListener->exitM(this);
-}
-
-
-EvaGrammarParser::MContext* EvaGrammarParser::m() {
-   return m(0);
-}
-
-EvaGrammarParser::MContext* EvaGrammarParser::m(int precedence) {
-  ParserRuleContext *parentContext = _ctx;
-  size_t parentState = getState();
-  EvaGrammarParser::MContext *_localctx = _tracker.createInstance<MContext>(_ctx, parentState);
-  EvaGrammarParser::MContext *previousContext = _localctx;
-  size_t startState = 8;
-  enterRecursionRule(_localctx, 8, EvaGrammarParser::RuleM, precedence);
-
-    
-
-  auto onExit = finally([=] {
-    unrollRecursionContexts(parentContext);
-  });
-  try {
-    size_t alt;
-    enterOuterAlt(_localctx, 1);
-    setState(51);
-    f();
-    _ctx->stop = _input->LT(-1);
-    setState(58);
-    _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
-    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
-      if (alt == 1) {
-        if (!_parseListeners.empty())
-          triggerExitRuleEvent();
-        previousContext = _localctx;
-        _localctx = _tracker.createInstance<MContext>(parentContext, parentState);
-        pushNewRecursionContext(_localctx, startState, RuleM);
-        setState(53);
-
-        if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-        setState(54);
-        match(EvaGrammarParser::MOD);
-        setState(55);
-        f(); 
-      }
-      setState(60);
-      _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx);
-    }
-  }
-  catch (RecognitionException &e) {
-    _errHandler->reportError(this, e);
-    _localctx->exception = std::current_exception();
-    _errHandler->recover(this, _localctx->exception);
-  }
-  return _localctx;
-}
-
-//----------------- FContext ------------------------------------------------------------------
-
-EvaGrammarParser::FContext::FContext(ParserRuleContext *parent, size_t invokingState)
-  : ParserRuleContext(parent, invokingState) {
-}
-
-tree::TerminalNode* EvaGrammarParser::FContext::INT() {
+tree::TerminalNode* EvaGrammarParser::LiteralContext::INT() {
   return getToken(EvaGrammarParser::INT, 0);
 }
 
-EvaGrammarParser::EContext* EvaGrammarParser::FContext::e() {
-  return getRuleContext<EvaGrammarParser::EContext>(0);
+EvaGrammarParser::ExprContext* EvaGrammarParser::LiteralContext::expr() {
+  return getRuleContext<EvaGrammarParser::ExprContext>(0);
 }
 
 
-size_t EvaGrammarParser::FContext::getRuleIndex() const {
-  return EvaGrammarParser::RuleF;
+size_t EvaGrammarParser::LiteralContext::getRuleIndex() const {
+  return EvaGrammarParser::RuleLiteral;
 }
 
-void EvaGrammarParser::FContext::enterRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::LiteralContext::enterRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->enterF(this);
+    parserListener->enterLiteral(this);
 }
 
-void EvaGrammarParser::FContext::exitRule(tree::ParseTreeListener *listener) {
+void EvaGrammarParser::LiteralContext::exitRule(tree::ParseTreeListener *listener) {
   auto parserListener = dynamic_cast<EvaGrammarListener *>(listener);
   if (parserListener != nullptr)
-    parserListener->exitF(this);
+    parserListener->exitLiteral(this);
 }
 
-EvaGrammarParser::FContext* EvaGrammarParser::f() {
-  FContext *_localctx = _tracker.createInstance<FContext>(_ctx, getState());
-  enterRule(_localctx, 10, EvaGrammarParser::RuleF);
+
+antlrcpp::Any EvaGrammarParser::LiteralContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<EvaGrammarVisitor*>(visitor))
+    return parserVisitor->visitLiteral(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+EvaGrammarParser::LiteralContext* EvaGrammarParser::literal() {
+  LiteralContext *_localctx = _tracker.createInstance<LiteralContext>(_ctx, getState());
+  enterRule(_localctx, 8, EvaGrammarParser::RuleLiteral);
 
   auto onExit = finally([=] {
     exitRule();
   });
   try {
-    setState(66);
+    setState(53);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case EvaGrammarParser::INT: {
         enterOuterAlt(_localctx, 1);
-        setState(61);
+        setState(48);
         match(EvaGrammarParser::INT);
         break;
       }
 
       case EvaGrammarParser::T__0: {
         enterOuterAlt(_localctx, 2);
-        setState(62);
+        setState(49);
         match(EvaGrammarParser::T__0);
-        setState(63);
-        e(0);
-        setState(64);
+        setState(50);
+        expr(0);
+        setState(51);
         match(EvaGrammarParser::T__1);
         break;
       }
@@ -576,9 +527,8 @@ EvaGrammarParser::FContext* EvaGrammarParser::f() {
 
 bool EvaGrammarParser::sempred(RuleContext *context, size_t ruleIndex, size_t predicateIndex) {
   switch (ruleIndex) {
-    case 2: return eSempred(dynamic_cast<EContext *>(context), predicateIndex);
-    case 3: return tSempred(dynamic_cast<TContext *>(context), predicateIndex);
-    case 4: return mSempred(dynamic_cast<MContext *>(context), predicateIndex);
+    case 2: return exprSempred(dynamic_cast<ExprContext *>(context), predicateIndex);
+    case 3: return termSempred(dynamic_cast<TermContext *>(context), predicateIndex);
 
   default:
     break;
@@ -586,7 +536,7 @@ bool EvaGrammarParser::sempred(RuleContext *context, size_t ruleIndex, size_t pr
   return true;
 }
 
-bool EvaGrammarParser::eSempred(EContext *_localctx, size_t predicateIndex) {
+bool EvaGrammarParser::exprSempred(ExprContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
     case 0: return precpred(_ctx, 2);
 
@@ -596,19 +546,9 @@ bool EvaGrammarParser::eSempred(EContext *_localctx, size_t predicateIndex) {
   return true;
 }
 
-bool EvaGrammarParser::tSempred(TContext *_localctx, size_t predicateIndex) {
+bool EvaGrammarParser::termSempred(TermContext *_localctx, size_t predicateIndex) {
   switch (predicateIndex) {
     case 1: return precpred(_ctx, 2);
-
-  default:
-    break;
-  }
-  return true;
-}
-
-bool EvaGrammarParser::mSempred(MContext *_localctx, size_t predicateIndex) {
-  switch (predicateIndex) {
-    case 2: return precpred(_ctx, 2);
 
   default:
     break;
@@ -625,16 +565,15 @@ atn::ATN EvaGrammarParser::_atn;
 std::vector<uint16_t> EvaGrammarParser::_serializedATN;
 
 std::vector<std::string> EvaGrammarParser::_ruleNames = {
-  "file_input", "single_input", "e", "t", "m", "f"
+  "program", "single_input", "expr", "term", "literal"
 };
 
 std::vector<std::string> EvaGrammarParser::_literalNames = {
-  "", "'('", "')'", "", "", "", "'*'", "'+'", "'-'", "'/'", "'%'"
+  "", "'('", "')'", "", "", "", "'*'", "'+'", "'-'", "'/'"
 };
 
 std::vector<std::string> EvaGrammarParser::_symbolicNames = {
-  "", "", "", "INT", "NEWLINE", "WS", "MUL", "PLUS", "MINUS", "DIVIDE", 
-  "MOD"
+  "", "", "", "INT", "NEWLINE", "WS", "MUL", "PLUS", "MINUS", "DIVIDE"
 };
 
 dfa::Vocabulary EvaGrammarParser::_vocabulary(_literalNames, _symbolicNames);
@@ -657,52 +596,44 @@ EvaGrammarParser::Initializer::Initializer() {
 
   _serializedATN = {
     0x3, 0x608b, 0xa72a, 0x8133, 0xb9ed, 0x417c, 0x3be7, 0x7786, 0x5964, 
-    0x3, 0xc, 0x47, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
-    0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x4, 0x7, 0x9, 0x7, 0x3, 
-    0x2, 0x3, 0x2, 0x7, 0x2, 0x11, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x14, 0xb, 
-    0x2, 0x3, 0x2, 0x3, 0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 
-    0x3, 0x5, 0x3, 0x1d, 0xa, 0x3, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
-    0x3, 0x4, 0x3, 0x4, 0x7, 0x4, 0x25, 0xa, 0x4, 0xc, 0x4, 0xe, 0x4, 0x28, 
-    0xb, 0x4, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 
-    0x7, 0x5, 0x30, 0xa, 0x5, 0xc, 0x5, 0xe, 0x5, 0x33, 0xb, 0x5, 0x3, 0x6, 
-    0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 0x7, 0x6, 0x3b, 0xa, 
-    0x6, 0xc, 0x6, 0xe, 0x6, 0x3e, 0xb, 0x6, 0x3, 0x7, 0x3, 0x7, 0x3, 0x7, 
-    0x3, 0x7, 0x3, 0x7, 0x5, 0x7, 0x45, 0xa, 0x7, 0x3, 0x7, 0x2, 0x5, 0x6, 
-    0x8, 0xa, 0x8, 0x2, 0x4, 0x6, 0x8, 0xa, 0xc, 0x2, 0x4, 0x3, 0x2, 0x9, 
-    0xa, 0x4, 0x2, 0x8, 0x8, 0xb, 0xb, 0x2, 0x48, 0x2, 0x12, 0x3, 0x2, 0x2, 
-    0x2, 0x4, 0x1c, 0x3, 0x2, 0x2, 0x2, 0x6, 0x1e, 0x3, 0x2, 0x2, 0x2, 0x8, 
-    0x29, 0x3, 0x2, 0x2, 0x2, 0xa, 0x34, 0x3, 0x2, 0x2, 0x2, 0xc, 0x44, 
-    0x3, 0x2, 0x2, 0x2, 0xe, 0x11, 0x7, 0x6, 0x2, 0x2, 0xf, 0x11, 0x5, 0x6, 
-    0x4, 0x2, 0x10, 0xe, 0x3, 0x2, 0x2, 0x2, 0x10, 0xf, 0x3, 0x2, 0x2, 0x2, 
-    0x11, 0x14, 0x3, 0x2, 0x2, 0x2, 0x12, 0x10, 0x3, 0x2, 0x2, 0x2, 0x12, 
-    0x13, 0x3, 0x2, 0x2, 0x2, 0x13, 0x15, 0x3, 0x2, 0x2, 0x2, 0x14, 0x12, 
-    0x3, 0x2, 0x2, 0x2, 0x15, 0x16, 0x7, 0x2, 0x2, 0x3, 0x16, 0x3, 0x3, 
-    0x2, 0x2, 0x2, 0x17, 0x1d, 0x7, 0x6, 0x2, 0x2, 0x18, 0x1d, 0x5, 0x6, 
-    0x4, 0x2, 0x19, 0x1a, 0x5, 0x6, 0x4, 0x2, 0x1a, 0x1b, 0x7, 0x6, 0x2, 
-    0x2, 0x1b, 0x1d, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x17, 0x3, 0x2, 0x2, 0x2, 
-    0x1c, 0x18, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x19, 0x3, 0x2, 0x2, 0x2, 0x1d, 
-    0x5, 0x3, 0x2, 0x2, 0x2, 0x1e, 0x1f, 0x8, 0x4, 0x1, 0x2, 0x1f, 0x20, 
-    0x5, 0x8, 0x5, 0x2, 0x20, 0x26, 0x3, 0x2, 0x2, 0x2, 0x21, 0x22, 0xc, 
-    0x4, 0x2, 0x2, 0x22, 0x23, 0x9, 0x2, 0x2, 0x2, 0x23, 0x25, 0x5, 0x8, 
-    0x5, 0x2, 0x24, 0x21, 0x3, 0x2, 0x2, 0x2, 0x25, 0x28, 0x3, 0x2, 0x2, 
-    0x2, 0x26, 0x24, 0x3, 0x2, 0x2, 0x2, 0x26, 0x27, 0x3, 0x2, 0x2, 0x2, 
-    0x27, 0x7, 0x3, 0x2, 0x2, 0x2, 0x28, 0x26, 0x3, 0x2, 0x2, 0x2, 0x29, 
-    0x2a, 0x8, 0x5, 0x1, 0x2, 0x2a, 0x2b, 0x5, 0xa, 0x6, 0x2, 0x2b, 0x31, 
-    0x3, 0x2, 0x2, 0x2, 0x2c, 0x2d, 0xc, 0x4, 0x2, 0x2, 0x2d, 0x2e, 0x9, 
-    0x3, 0x2, 0x2, 0x2e, 0x30, 0x5, 0xa, 0x6, 0x2, 0x2f, 0x2c, 0x3, 0x2, 
-    0x2, 0x2, 0x30, 0x33, 0x3, 0x2, 0x2, 0x2, 0x31, 0x2f, 0x3, 0x2, 0x2, 
-    0x2, 0x31, 0x32, 0x3, 0x2, 0x2, 0x2, 0x32, 0x9, 0x3, 0x2, 0x2, 0x2, 
-    0x33, 0x31, 0x3, 0x2, 0x2, 0x2, 0x34, 0x35, 0x8, 0x6, 0x1, 0x2, 0x35, 
-    0x36, 0x5, 0xc, 0x7, 0x2, 0x36, 0x3c, 0x3, 0x2, 0x2, 0x2, 0x37, 0x38, 
-    0xc, 0x4, 0x2, 0x2, 0x38, 0x39, 0x7, 0xc, 0x2, 0x2, 0x39, 0x3b, 0x5, 
-    0xc, 0x7, 0x2, 0x3a, 0x37, 0x3, 0x2, 0x2, 0x2, 0x3b, 0x3e, 0x3, 0x2, 
-    0x2, 0x2, 0x3c, 0x3a, 0x3, 0x2, 0x2, 0x2, 0x3c, 0x3d, 0x3, 0x2, 0x2, 
-    0x2, 0x3d, 0xb, 0x3, 0x2, 0x2, 0x2, 0x3e, 0x3c, 0x3, 0x2, 0x2, 0x2, 
-    0x3f, 0x45, 0x7, 0x5, 0x2, 0x2, 0x40, 0x41, 0x7, 0x3, 0x2, 0x2, 0x41, 
-    0x42, 0x5, 0x6, 0x4, 0x2, 0x42, 0x43, 0x7, 0x4, 0x2, 0x2, 0x43, 0x45, 
-    0x3, 0x2, 0x2, 0x2, 0x44, 0x3f, 0x3, 0x2, 0x2, 0x2, 0x44, 0x40, 0x3, 
-    0x2, 0x2, 0x2, 0x45, 0xd, 0x3, 0x2, 0x2, 0x2, 0x9, 0x10, 0x12, 0x1c, 
-    0x26, 0x31, 0x3c, 0x44, 
+    0x3, 0xb, 0x3a, 0x4, 0x2, 0x9, 0x2, 0x4, 0x3, 0x9, 0x3, 0x4, 0x4, 0x9, 
+    0x4, 0x4, 0x5, 0x9, 0x5, 0x4, 0x6, 0x9, 0x6, 0x3, 0x2, 0x3, 0x2, 0x7, 
+    0x2, 0xf, 0xa, 0x2, 0xc, 0x2, 0xe, 0x2, 0x12, 0xb, 0x2, 0x3, 0x2, 0x3, 
+    0x2, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x3, 0x5, 0x3, 0x1b, 
+    0xa, 0x3, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 0x3, 0x4, 
+    0x7, 0x4, 0x23, 0xa, 0x4, 0xc, 0x4, 0xe, 0x4, 0x26, 0xb, 0x4, 0x3, 0x5, 
+    0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x3, 0x5, 0x7, 0x5, 0x2e, 0xa, 
+    0x5, 0xc, 0x5, 0xe, 0x5, 0x31, 0xb, 0x5, 0x3, 0x6, 0x3, 0x6, 0x3, 0x6, 
+    0x3, 0x6, 0x3, 0x6, 0x5, 0x6, 0x38, 0xa, 0x6, 0x3, 0x6, 0x2, 0x4, 0x6, 
+    0x8, 0x7, 0x2, 0x4, 0x6, 0x8, 0xa, 0x2, 0x4, 0x3, 0x2, 0x9, 0xa, 0x4, 
+    0x2, 0x8, 0x8, 0xb, 0xb, 0x2, 0x3b, 0x2, 0x10, 0x3, 0x2, 0x2, 0x2, 0x4, 
+    0x1a, 0x3, 0x2, 0x2, 0x2, 0x6, 0x1c, 0x3, 0x2, 0x2, 0x2, 0x8, 0x27, 
+    0x3, 0x2, 0x2, 0x2, 0xa, 0x37, 0x3, 0x2, 0x2, 0x2, 0xc, 0xf, 0x7, 0x6, 
+    0x2, 0x2, 0xd, 0xf, 0x5, 0x6, 0x4, 0x2, 0xe, 0xc, 0x3, 0x2, 0x2, 0x2, 
+    0xe, 0xd, 0x3, 0x2, 0x2, 0x2, 0xf, 0x12, 0x3, 0x2, 0x2, 0x2, 0x10, 0xe, 
+    0x3, 0x2, 0x2, 0x2, 0x10, 0x11, 0x3, 0x2, 0x2, 0x2, 0x11, 0x13, 0x3, 
+    0x2, 0x2, 0x2, 0x12, 0x10, 0x3, 0x2, 0x2, 0x2, 0x13, 0x14, 0x7, 0x2, 
+    0x2, 0x3, 0x14, 0x3, 0x3, 0x2, 0x2, 0x2, 0x15, 0x1b, 0x7, 0x6, 0x2, 
+    0x2, 0x16, 0x1b, 0x5, 0x6, 0x4, 0x2, 0x17, 0x18, 0x5, 0x6, 0x4, 0x2, 
+    0x18, 0x19, 0x7, 0x6, 0x2, 0x2, 0x19, 0x1b, 0x3, 0x2, 0x2, 0x2, 0x1a, 
+    0x15, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x16, 0x3, 0x2, 0x2, 0x2, 0x1a, 0x17, 
+    0x3, 0x2, 0x2, 0x2, 0x1b, 0x5, 0x3, 0x2, 0x2, 0x2, 0x1c, 0x1d, 0x8, 
+    0x4, 0x1, 0x2, 0x1d, 0x1e, 0x5, 0x8, 0x5, 0x2, 0x1e, 0x24, 0x3, 0x2, 
+    0x2, 0x2, 0x1f, 0x20, 0xc, 0x4, 0x2, 0x2, 0x20, 0x21, 0x9, 0x2, 0x2, 
+    0x2, 0x21, 0x23, 0x5, 0x8, 0x5, 0x2, 0x22, 0x1f, 0x3, 0x2, 0x2, 0x2, 
+    0x23, 0x26, 0x3, 0x2, 0x2, 0x2, 0x24, 0x22, 0x3, 0x2, 0x2, 0x2, 0x24, 
+    0x25, 0x3, 0x2, 0x2, 0x2, 0x25, 0x7, 0x3, 0x2, 0x2, 0x2, 0x26, 0x24, 
+    0x3, 0x2, 0x2, 0x2, 0x27, 0x28, 0x8, 0x5, 0x1, 0x2, 0x28, 0x29, 0x5, 
+    0xa, 0x6, 0x2, 0x29, 0x2f, 0x3, 0x2, 0x2, 0x2, 0x2a, 0x2b, 0xc, 0x4, 
+    0x2, 0x2, 0x2b, 0x2c, 0x9, 0x3, 0x2, 0x2, 0x2c, 0x2e, 0x5, 0xa, 0x6, 
+    0x2, 0x2d, 0x2a, 0x3, 0x2, 0x2, 0x2, 0x2e, 0x31, 0x3, 0x2, 0x2, 0x2, 
+    0x2f, 0x2d, 0x3, 0x2, 0x2, 0x2, 0x2f, 0x30, 0x3, 0x2, 0x2, 0x2, 0x30, 
+    0x9, 0x3, 0x2, 0x2, 0x2, 0x31, 0x2f, 0x3, 0x2, 0x2, 0x2, 0x32, 0x38, 
+    0x7, 0x5, 0x2, 0x2, 0x33, 0x34, 0x7, 0x3, 0x2, 0x2, 0x34, 0x35, 0x5, 
+    0x6, 0x4, 0x2, 0x35, 0x36, 0x7, 0x4, 0x2, 0x2, 0x36, 0x38, 0x3, 0x2, 
+    0x2, 0x2, 0x37, 0x32, 0x3, 0x2, 0x2, 0x2, 0x37, 0x33, 0x3, 0x2, 0x2, 
+    0x2, 0x38, 0xb, 0x3, 0x2, 0x2, 0x2, 0x8, 0xe, 0x10, 0x1a, 0x24, 0x2f, 
+    0x37, 
   };
 
   atn::ATNDeserializer deserializer;

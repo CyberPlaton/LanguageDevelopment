@@ -244,13 +244,13 @@ void Application::onImGui()
 					{
 						// Grammar.
 						cout << "Checking Grammar File (if no error message, then everything OK!)" << endl;
-						std::string cmd = "java -jar source/antlr-4.7-complete.jar -Dlanguage=Cpp -o source/generated/ " + file.first;
+						std::string cmd = "java -jar source/antlr-4.7-complete.jar -Dlanguage=Cpp -visitor -o source/generated/ " + file.first;
 						std::string result = exec_command(cmd.c_str());
 					}
 					else
 					{
 						// Source.
-						cout << "Not Implemented" << endl;
+						_sendFileToEval(file.first, console_window);
 					}
 				}
 
@@ -316,7 +316,7 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 		EvaGrammarParser parser(&tokens);
 
 		
-		antlr4::tree::ParseTree* tree = parser.file_input();
+		antlr4::tree::ParseTree* tree = parser.program();
 
 		//cout << "Concrete Syntax Tree: " << endl;
 		//cout << tree->toStringTree(&parser) << endl;
@@ -332,6 +332,18 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 }
 
 
+
+bool Application::_sendFileToEval(const std::string& file, bool app_console_output)
+{
+	using namespace nlohmann;
+	using namespace std;
+
+	ASTConstructor constr;
+	json ast;
+	constr.create(&ast, file);
+	
+	return false;
+}
 
 
 
@@ -781,4 +793,42 @@ bool Application::_initFonts()
 	fonts.emplace(std::make_pair("Karla-Regular", f));
 
 	return true;
+}
+
+
+
+bool ASTConstructor::create(nlohmann::json* j, const std::string& file, bool app_console_output)
+{
+	using namespace nlohmann;
+	using namespace antlr4;
+	using namespace std;
+
+	string line;
+	ifstream source(file.c_str());
+
+	if (source.is_open())
+	{
+		antlr4::ANTLRInputStream input(source);
+		EvaGrammarLexer lexer(&input);
+		antlr4::CommonTokenStream tokens(&lexer);
+
+
+		tokens.fill();
+		for (auto token : tokens.getTokens())
+		{
+			size_t type = token->getType();
+			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
+
+
+		}
+
+		EvaGrammarParser parser(&tokens);
+		antlr4::tree::ParseTree* tree = parser.program();
+		
+		
+		return true;
+	}
+
+
+	return false;
 }

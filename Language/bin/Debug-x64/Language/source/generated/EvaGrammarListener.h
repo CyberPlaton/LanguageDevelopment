@@ -14,23 +14,20 @@
 class  EvaGrammarListener : public antlr4::tree::ParseTreeListener {
 public:
 
-  virtual void enterFile_input(EvaGrammarParser::File_inputContext *ctx) = 0;
-  virtual void exitFile_input(EvaGrammarParser::File_inputContext *ctx) = 0;
+  virtual void enterProgram(EvaGrammarParser::ProgramContext *ctx) = 0;
+  virtual void exitProgram(EvaGrammarParser::ProgramContext *ctx) = 0;
 
   virtual void enterSingle_input(EvaGrammarParser::Single_inputContext *ctx) = 0;
   virtual void exitSingle_input(EvaGrammarParser::Single_inputContext *ctx) = 0;
 
-  virtual void enterE(EvaGrammarParser::EContext *ctx) = 0;
-  virtual void exitE(EvaGrammarParser::EContext *ctx) = 0;
+  virtual void enterExpr(EvaGrammarParser::ExprContext *ctx) = 0;
+  virtual void exitExpr(EvaGrammarParser::ExprContext *ctx) = 0;
 
-  virtual void enterT(EvaGrammarParser::TContext *ctx) = 0;
-  virtual void exitT(EvaGrammarParser::TContext *ctx) = 0;
+  virtual void enterTerm(EvaGrammarParser::TermContext *ctx) = 0;
+  virtual void exitTerm(EvaGrammarParser::TermContext *ctx) = 0;
 
-  virtual void enterM(EvaGrammarParser::MContext *ctx) = 0;
-  virtual void exitM(EvaGrammarParser::MContext *ctx) = 0;
-
-  virtual void enterF(EvaGrammarParser::FContext *ctx) = 0;
-  virtual void exitF(EvaGrammarParser::FContext *ctx) = 0;
+  virtual void enterLiteral(EvaGrammarParser::LiteralContext *ctx) = 0;
+  virtual void exitLiteral(EvaGrammarParser::LiteralContext *ctx) = 0;
 
 
 };

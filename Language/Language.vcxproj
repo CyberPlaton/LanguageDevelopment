@@ -151,9 +151,11 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.cpp" />
     <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.cpp" />
     <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.cpp" />
     <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.cpp" />
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.cpp" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui.cpp" />
@@ -164,11 +166,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ANTLRInterface.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.h" />
     <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.h" />
     <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.h" />
     <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.h" />
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.h" />
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-common.h" />
     <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-runtime.h" />
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_glfw.h" />

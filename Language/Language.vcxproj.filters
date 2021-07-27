@@ -19,6 +19,9 @@
     <Filter Include="Header Files\ANTLR">
       <UniqueIdentifier>{82014234-09e9-420d-907f-2ac3f88266c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Langauge">
+      <UniqueIdentifier>{42dfd88c-781b-47a1-a415-f69e8ba0f218}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,6 +61,12 @@
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
     <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.cpp">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClCompile>
+    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.cpp">
       <Filter>Header Files\ANTLR</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,6 +114,15 @@
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
     <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="ANTLRInterface.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.h">
+      <Filter>Header Files\ANTLR</Filter>
+    </ClInclude>
+    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.h">
       <Filter>Header Files\ANTLR</Filter>
     </ClInclude>
   </ItemGroup>

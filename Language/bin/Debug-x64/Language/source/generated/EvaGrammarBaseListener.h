@@ -16,23 +16,20 @@
 class  EvaGrammarBaseListener : public EvaGrammarListener {
 public:
 
-  virtual void enterFile_input(EvaGrammarParser::File_inputContext * /*ctx*/) override { }
-  virtual void exitFile_input(EvaGrammarParser::File_inputContext * /*ctx*/) override { }
+  virtual void enterProgram(EvaGrammarParser::ProgramContext * /*ctx*/) override { }
+  virtual void exitProgram(EvaGrammarParser::ProgramContext * /*ctx*/) override { }
 
   virtual void enterSingle_input(EvaGrammarParser::Single_inputContext * /*ctx*/) override { }
   virtual void exitSingle_input(EvaGrammarParser::Single_inputContext * /*ctx*/) override { }
 
-  virtual void enterE(EvaGrammarParser::EContext * /*ctx*/) override { }
-  virtual void exitE(EvaGrammarParser::EContext * /*ctx*/) override { }
+  virtual void enterExpr(EvaGrammarParser::ExprContext * /*ctx*/) override { }
+  virtual void exitExpr(EvaGrammarParser::ExprContext * /*ctx*/) override { }
 
-  virtual void enterT(EvaGrammarParser::TContext * /*ctx*/) override { }
-  virtual void exitT(EvaGrammarParser::TContext * /*ctx*/) override { }
+  virtual void enterTerm(EvaGrammarParser::TermContext * /*ctx*/) override { }
+  virtual void exitTerm(EvaGrammarParser::TermContext * /*ctx*/) override { }
 
-  virtual void enterM(EvaGrammarParser::MContext * /*ctx*/) override { }
-  virtual void exitM(EvaGrammarParser::MContext * /*ctx*/) override { }
-
-  virtual void enterF(EvaGrammarParser::FContext * /*ctx*/) override { }
-  virtual void exitF(EvaGrammarParser::FContext * /*ctx*/) override { }
+  virtual void enterLiteral(EvaGrammarParser::LiteralContext * /*ctx*/) override { }
+  virtual void exitLiteral(EvaGrammarParser::LiteralContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

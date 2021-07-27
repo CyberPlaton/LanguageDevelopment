@@ -5,52 +5,6 @@
 
 int main()
 {
-	// TESTING
-	// Check why Release build is not working
-	//
-	//
-	/*
-	using namespace std;
-	string line;
-	ifstream source("source/python_test.py");
-	if (source.is_open())
-	{
-		antlr4::ANTLRInputStream input(source);
-		Python3Lexer lexer(&input);
-		antlr4::CommonTokenStream tokens(&lexer);
-
-
-		tokens.fill();
-		for (auto token : tokens.getTokens())
-		{
-			size_t type = token->getType();
-			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
-
-
-			//cout << token->getText() << "";
-			cout << token->toString();
-			cout << "	Type: " << type_name;
-			cout << "	Value: " << token->getText() << endl;
-
-			if (type_name.compare("NEWLINE") == 0)
-			{
-				cout << endl;
-			}
-		}
-
-
-		Python3Parser parser(&tokens);
-
-		antlr4::tree::ParseTree* tree = parser.file_input();
-
-		cout << "Concrete Syntax Tree: " << endl;
-		cout << tree->toStringTree(&parser) << endl;
-		source.close();
-	}
-
-	return 0;
-	*/
-
 
 	Application* app = Application::get();
 	if (app->startUp("IDE", 920, 720, false))
