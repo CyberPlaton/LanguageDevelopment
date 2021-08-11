@@ -1,5 +1,8 @@
 #pragma once
 
+/*
+* GUI
+*/
 #include"common/include/GL/glew.h"
 #pragma comment(lib, "glew32.lib")
 
@@ -12,13 +15,21 @@
 #include "common/include/imgui-master/examples/imgui_impl_glfw.h"
 #include "common/include/imgui-master/examples/imgui_impl_opengl3.h"
 
-
+/*
+* JSON
+*/
 #include "common/include/nlohmann/json.hpp"
 
 
-#include "ANTLRInterface.h"
+/*
+* CLOX
+*/
+#include "CLoxInterface.h"
 
 
+/*
+* STANDARD
+*/
 #include <vector>
 #include <any>
 #include <string>
@@ -27,8 +38,9 @@
 #include <sstream>
 #include <cctype>
 
-struct AppConsole;
 
+
+struct AppConsole;
 
 std::string exec_command(const char* cmd);
 
@@ -174,7 +186,10 @@ private:
 
     void _sendFileToCheck(const std::string file, bool app_console_output = false);
 
-    bool _sendFileToEval(const std::string& file, bool app_console_output = false);
+    //bool _sendFileToEval(const std::string& file, bool app_console_output = false);
+
+    bool _parseFile(const std::string& file);
+
 };
 
 

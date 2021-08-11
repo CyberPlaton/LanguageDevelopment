@@ -12,8 +12,7 @@
 class  EvaGrammarParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, T__1 = 2, INT = 3, NEWLINE = 4, WS = 5, MUL = 6, PLUS = 7, 
-    MINUS = 8, DIVIDE = 9
+    INT = 1, NEWLINE = 2, WS = 3, MUL = 4, PLUS = 5, MINUS = 6, DIVIDE = 7
   };
 
   enum {
@@ -112,7 +111,6 @@ public:
     LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *INT();
-    ExprContext *expr();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

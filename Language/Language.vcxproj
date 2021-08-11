@@ -150,12 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.cpp" />
-    <ClCompile Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.cpp" />
+    <ClCompile Include="chunk.c" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_glfw.cpp" />
     <ClCompile Include="common\include\imgui-master\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui.cpp" />
@@ -163,19 +158,21 @@
     <ClCompile Include="common\include\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui_tables.cpp" />
     <ClCompile Include="common\include\imgui-master\imgui_widgets.cpp" />
+    <ClCompile Include="compiler.c" />
+    <ClCompile Include="debug.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="memory.c" />
+    <ClCompile Include="object.c" />
+    <ClCompile Include="scanner.c" />
+    <ClCompile Include="table.c" />
+    <ClCompile Include="value.c" />
+    <ClCompile Include="vm.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ANTLRInterface.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseListener.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarBaseVisitor.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarLexer.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarListener.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarParser.h" />
-    <ClInclude Include="bin\Debug-x64\Language\source\generated\EvaGrammarVisitor.h" />
-    <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-common.h" />
-    <ClInclude Include="common\include\ANTLR\antlr4-runtime\antlr4-runtime.h" />
+    <ClInclude Include="chunk.h" />
+    <ClInclude Include="CLoxInterface.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_glfw.h" />
     <ClInclude Include="common\include\imgui-master\examples\imgui_impl_opengl3.h" />
     <ClInclude Include="common\include\imgui-master\imconfig.h" />
@@ -184,6 +181,14 @@
     <ClInclude Include="common\include\imgui-master\imstb_rectpack.h" />
     <ClInclude Include="common\include\imgui-master\imstb_textedit.h" />
     <ClInclude Include="common\include\imgui-master\imstb_truetype.h" />
+    <ClInclude Include="compiler.h" />
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="memory.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="scanner.h" />
+    <ClInclude Include="table.h" />
+    <ClInclude Include="value.h" />
+    <ClInclude Include="vm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

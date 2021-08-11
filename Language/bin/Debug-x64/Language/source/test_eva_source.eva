@@ -1,2 +1,7 @@
-2+2+(1+5 * 9)
-1-1+1*5
+var a = 2;
+var b = 1.5;
+
+print a*b;
+print a+b;
+print a-b;
+print clock();

@@ -3,10 +3,12 @@ grammar EvaGrammar;
 /*Starting Rules*/
 program: (NEWLINE | expr)* EOF;
 
+
 single_input: NEWLINE
-			| expr
-			| expr NEWLINE
-			;
+	| expr
+	| expr NEWLINE
+	;
+
 
 
 /*Parser Rules*/
@@ -21,11 +23,11 @@ term: term (MUL | DIVIDE) literal
 
 
 literal: INT
-	| '(' expr ')'
 	;
 
 
 INT: [0-9]+;
+
 
 NEWLINE: [\r\n] -> skip;
 WS: [' ' | \t] -> skip;

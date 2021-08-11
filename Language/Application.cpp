@@ -227,44 +227,17 @@ void Application::onImGui()
 					outfile << file.second->buffer;
 					outfile.close();
 
-
 					cout << file.second->buffer << endl;
 					file.second->saved = true;
 					file.second->prev_size = file.second->size();
 				}
 
+
 				ImGui::SameLine();
-				if (ImGui::Button("Eval", ImVec2(100.0f, 20.0f)))
+				if (ImGui::Button("Run", ImVec2(100.0f, 20.0f)))
 				{
-					// Send file to evaluation.
-
-
-					// Check whether the file is a source file or a grammar.
-					if (file.first.find(".g4") != std::string::npos)
-					{
-						// Grammar.
-						cout << "Checking Grammar File (if no error message, then everything OK!)" << endl;
-						std::string cmd = "java -jar source/antlr-4.7-complete.jar -Dlanguage=Cpp -visitor -o source/generated/ " + file.first;
-						std::string result = exec_command(cmd.c_str());
-					}
-					else
-					{
-						// Source.
-						_sendFileToEval(file.first, console_window);
-					}
-				}
-
-
-				// Display Parsing option only for NON-GRAMMAR files.
-				if(file.first.find(".g4") == std::string::npos)
-				{
-					ImGui::SameLine();
-					if (ImGui::Button("Parse", ImVec2(100.0f, 20.0f)))
-					{
-						// Send current open file to check in parser and lexer,
-						// and whether to give output to app console window.
-						_sendFileToCheck(file.first, console_window);
-					}
+					// Send file to CLOX Compiler and Interpreter.
+					_sendFileToCheck(file.first, console_window);
 				}
 
 				ImGui::End();
@@ -278,71 +251,63 @@ void Application::onImGui()
 }
 
 
-
 void Application::_sendFileToCheck(const std::string file, bool app_console_output)
 {
-	using namespace std;
-
-	string line;
-	ifstream source(file.c_str());
-	g_Console->AddLog(("#B# Parsing result for \"" + file + "\"").c_str());
-	if (source.is_open())
-	{
-		antlr4::ANTLRInputStream input(source);
-		EvaGrammarLexer lexer(&input);
-		antlr4::CommonTokenStream tokens(&lexer);
-
-		std::string token_text_line;
+	// CLOX Domain.
 
 
-		tokens.fill();
-		for (auto token : tokens.getTokens())
-		{
-			size_t type = token->getType();
-			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
+	initVM(); // Initialize the virtual machine.
 
 
-			token_text_line = "Type: " + type_name + " Value: " + token->getText();
+	// Read File.
+	FILE* f = fopen(file.c_str(), "rb");
+	//> no-file
+	if (f == NULL) {
+		fprintf(stderr, "Could not open file \"%s\".\n", file);
+		exit(74);
+	}
+	//< no-file
 
-			if (type_name.compare("NEWLINE") == 0)
-			{
+	fseek(f, 0L, SEEK_END);
+	size_t fileSize = ftell(f);
+	rewind(f);
 
-			}
-
-			g_Console->AddLog(token_text_line.c_str());
-		}
-
-
-		EvaGrammarParser parser(&tokens);
-
-		
-		antlr4::tree::ParseTree* tree = parser.program();
-
-		//cout << "Concrete Syntax Tree: " << endl;
-		//cout << tree->toStringTree(&parser) << endl;
-
-		token_text_line = tree->toStringTree(&parser, true);
-
-		g_Console->AddLog("#M# Concrete Syntax Tree: ");
-		g_Console->AddLog(token_text_line.c_str());
-
-		source.close();
+	char* buffer = (char*)malloc(fileSize + 1);
+	//> no-buffer
+	if (buffer == NULL) {
+		fprintf(stderr, "Not enough memory to read \"%s\".\n", file);
+		exit(74);
 	}
 
-}
+	//< no-buffer
+	size_t bytesRead = fread(buffer, sizeof(char), fileSize, f);
+	//> no-read
+	if (bytesRead < fileSize) {
+		fprintf(stderr, "Could not read file \"%s\".\n", file);
+		exit(74);
+	}
+
+	//< no-read
+	buffer[bytesRead] = '\0';
+
+	fclose(f);
 
 
+	// Run File.
+	char* source = buffer;
+	InterpretResult result = interpret(source);
+	free(source);
 
-bool Application::_sendFileToEval(const std::string& file, bool app_console_output)
-{
-	using namespace nlohmann;
-	using namespace std;
-
-	ASTConstructor constr;
-	json ast;
-	constr.create(&ast, file);
-	
-	return false;
+	if (result == INTERPRET_COMPILE_ERROR)
+	{
+		// 65
+		g_Console->AddLog("#R# INTERPRET_COMPILE_ERROR");
+	}
+	else if (result == INTERPRET_RUNTIME_ERROR)
+	{
+		// 70
+		g_Console->AddLog("#R# INTERPRET_RUNTIME_ERROR");
+	}
 }
 
 
@@ -800,34 +765,8 @@ bool Application::_initFonts()
 bool ASTConstructor::create(nlohmann::json* j, const std::string& file, bool app_console_output)
 {
 	using namespace nlohmann;
-	using namespace antlr4;
 	using namespace std;
 
-	string line;
-	ifstream source(file.c_str());
-
-	if (source.is_open())
-	{
-		antlr4::ANTLRInputStream input(source);
-		EvaGrammarLexer lexer(&input);
-		antlr4::CommonTokenStream tokens(&lexer);
-
-
-		tokens.fill();
-		for (auto token : tokens.getTokens())
-		{
-			size_t type = token->getType();
-			std::string type_name = lexer.getVocabulary().getSymbolicName(type);
-
-
-		}
-
-		EvaGrammarParser parser(&tokens);
-		antlr4::tree::ParseTree* tree = parser.program();
-		
-		
-		return true;
-	}
 
 
 	return false;
