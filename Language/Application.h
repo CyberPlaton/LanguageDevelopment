@@ -26,6 +26,10 @@
 */
 #include "CLoxInterface.h"
 
+/*
+* LANGUAGE
+*/
+#include "LangInterface.h"
 
 /*
 * STANDARD
@@ -191,20 +195,6 @@ private:
     bool _parseFile(const std::string& file);
 
 };
-
-
-
-
-struct ASTConstructor
-{
-    ASTConstructor(){}
-
-    // Construct an abstract syntax tree from antlr4 concrete syntax tree.
-    bool create(nlohmann::json* j, const std::string& file, bool app_console_output = false);
-
-};
-
-
 
 
 

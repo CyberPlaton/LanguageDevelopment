@@ -19,6 +19,9 @@
     <Filter Include="Header Files\Langauge">
       <UniqueIdentifier>{42dfd88c-781b-47a1-a415-f69e8ba0f218}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\LanguageCpp">
+      <UniqueIdentifier>{1117f9f7-6333-406e-9794-95b7efd4d17e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -74,6 +77,21 @@
     </ClCompile>
     <ClCompile Include="vm.c">
       <Filter>Header Files\Langauge</Filter>
+    </ClCompile>
+    <ClCompile Include="lang_common.cpp">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lang_debug.cpp">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lang_value.cpp">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lang_chunk.cpp">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lang_virtualmachine.cpp">
+      <Filter>Header Files\LanguageCpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +154,24 @@
     </ClInclude>
     <ClInclude Include="CLoxInterface.h">
       <Filter>Header Files\Langauge</Filter>
+    </ClInclude>
+    <ClInclude Include="lang_common.h">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="LangInterface.h">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lang_debug.h">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lang_chunk.h">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lang_value.h">
+      <Filter>Header Files\LanguageCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lang_virtualmachine.h">
+      <Filter>Header Files\LanguageCpp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

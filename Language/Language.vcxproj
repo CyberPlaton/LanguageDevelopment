@@ -160,6 +160,11 @@
     <ClCompile Include="common\include\imgui-master\imgui_widgets.cpp" />
     <ClCompile Include="compiler.c" />
     <ClCompile Include="debug.c" />
+    <ClCompile Include="lang_chunk.cpp" />
+    <ClCompile Include="lang_common.cpp" />
+    <ClCompile Include="lang_debug.cpp" />
+    <ClCompile Include="lang_value.cpp" />
+    <ClCompile Include="lang_virtualmachine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="memory.c" />
     <ClCompile Include="object.c" />
@@ -183,6 +188,12 @@
     <ClInclude Include="common\include\imgui-master\imstb_truetype.h" />
     <ClInclude Include="compiler.h" />
     <ClInclude Include="debug.h" />
+    <ClInclude Include="LangInterface.h" />
+    <ClInclude Include="lang_chunk.h" />
+    <ClInclude Include="lang_common.h" />
+    <ClInclude Include="lang_debug.h" />
+    <ClInclude Include="lang_value.h" />
+    <ClInclude Include="lang_virtualmachine.h" />
     <ClInclude Include="memory.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="scanner.h" />

@@ -1,5 +1,21 @@
 #include "Application.h"
 
+/*
+* LANGUAGE
+*/
+void LangDebugger::disassembleChunk(LangChunk* c, const std::string& name, Application* app)
+{
+	if (app == nullptr || c == nullptr) return;
+
+
+
+}
+
+
+
+
+
+
 std::string exec_command(const char* cmd) {
 	std::array<char, 128> buffer;
 	std::string result;
@@ -102,6 +118,50 @@ void Application::onImGui()
 	{
 		ImGui::ShowDemoWindow(&show_demo_window);
 	}
+
+
+
+
+
+	// TESTING: OUTPUT TO CONSOLE AND INIT/FREE OF CODE CHUNKS
+	console_window = true;
+	LangVM vm;
+	LangVM::initVM(&vm);
+
+	LangChunk chunk;
+
+	int index = LangChunk::addConstant(&chunk, 1.7);
+	LangChunk::writeChunk(&chunk, LangOpCode::op_constant, 123);
+	LangChunk::writeChunk(&chunk, index, 123);
+
+	index = LangChunk::addConstant(&chunk, 0.3);
+	LangChunk::writeChunk(&chunk, LangOpCode::op_constant, 123);
+	LangChunk::writeChunk(&chunk, index, 123);
+
+	LangChunk::writeChunk(&chunk, LangOpCode::op_add, 123);
+
+	index = LangChunk::addConstant(&chunk, 0.5);
+	LangChunk::writeChunk(&chunk, LangOpCode::op_constant, 123);
+	LangChunk::writeChunk(&chunk, index, 123);
+
+	LangChunk::writeChunk(&chunk, LangOpCode::op_multiply, 123);
+
+	LangChunk::writeChunk(&chunk, LangOpCode::op_return, 123);
+
+	LangDebugger::disassembleChunk(&chunk, "Test Chunk");
+
+	LangInterpretResult result = LangVM::interpret(&vm, &chunk);
+
+	LangVM::showStackTop(&vm);
+
+	LangChunk::freeChunk(&chunk);
+
+
+	LangVM::freeVM(&vm);
+	// TESTING END
+
+
+
 
 
 
@@ -253,6 +313,8 @@ void Application::onImGui()
 
 void Application::_sendFileToCheck(const std::string file, bool app_console_output)
 {
+	using namespace std;
+
 	// CLOX Domain.
 
 
@@ -297,6 +359,7 @@ void Application::_sendFileToCheck(const std::string file, bool app_console_outp
 	char* source = buffer;
 	InterpretResult result = interpret(source);
 	free(source);
+
 
 	if (result == INTERPRET_COMPILE_ERROR)
 	{
@@ -758,16 +821,4 @@ bool Application::_initFonts()
 	fonts.emplace(std::make_pair("Karla-Regular", f));
 
 	return true;
-}
-
-
-
-bool ASTConstructor::create(nlohmann::json* j, const std::string& file, bool app_console_output)
-{
-	using namespace nlohmann;
-	using namespace std;
-
-
-
-	return false;
 }
