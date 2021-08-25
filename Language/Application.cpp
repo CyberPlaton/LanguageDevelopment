@@ -152,6 +152,19 @@ void Application::onImGui()
 
 	LangInterpretResult result = LangVM::interpret(&vm, &chunk);
 
+	if (result == LangInterpretResult::interpret_compile_error)
+	{
+		cout << "Compile Error" << endl;
+	}
+	else if (result == LangInterpretResult::interpret_runtime_error)
+	{
+		cout << "Runtime Error" << endl;
+	}
+	else
+	{
+		cout << "Successfully executed" << endl;
+	}
+
 	LangVM::showStackTop(&vm);
 
 	LangChunk::freeChunk(&chunk);

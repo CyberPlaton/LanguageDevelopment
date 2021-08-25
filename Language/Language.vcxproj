@@ -162,6 +162,7 @@
     <ClCompile Include="debug.c" />
     <ClCompile Include="lang_chunk.cpp" />
     <ClCompile Include="lang_common.cpp" />
+    <ClCompile Include="lang_compiler.cpp" />
     <ClCompile Include="lang_debug.cpp" />
     <ClCompile Include="lang_value.cpp" />
     <ClCompile Include="lang_virtualmachine.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="LangInterface.h" />
     <ClInclude Include="lang_chunk.h" />
     <ClInclude Include="lang_common.h" />
+    <ClInclude Include="lang_compiler.h" />
     <ClInclude Include="lang_debug.h" />
     <ClInclude Include="lang_value.h" />
     <ClInclude Include="lang_virtualmachine.h" />
