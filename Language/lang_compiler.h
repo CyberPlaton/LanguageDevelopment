@@ -49,6 +49,7 @@ enum LangTokenType
 	token_super,
 	token_this,
 	token_var,
+	token_class,
 
 	token_print,
 
@@ -86,9 +87,13 @@ struct LangCompiler
 	static void skipWhitespace(LangCompiler* comp);
 	static char peek(LangCompiler* comp);
 	static char peekNext(LangCompiler* comp);
-
+	static bool isDigit(char c);
+	static bool isLetter(char c);
+	static LangToken makeIdentifier(LangCompiler* comp);
+	static LangToken makeNumber(LangCompiler* comp);
 	static LangToken makeString(LangCompiler* comp);
-
+	static LangTokenType identifierType(LangCompiler* comp);
+	static LangTokenType checkKeyword(LangCompiler* comp, int start, int length, const char* rest, LangTokenType type);
 
 	const char* start = nullptr;
 	const char* current = nullptr;

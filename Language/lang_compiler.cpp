@@ -116,29 +116,103 @@ LangToken LangCompiler::makeString(LangCompiler* comp)
 }
 
 
-bool LangCompiler::isDigit(LangCompiler* comp, char c)
+bool LangCompiler::isDigit(char c)
 {
 	return c >= '0' && c <= '9';
 }
 
+bool LangCompiler::isLetter(char c)
+{
+	return (c >= 'a' && c <= 'z' ||
+			c >= 'A' && c <= 'Z' ||
+			c == '_');
+}
 
 LangToken LangCompiler::makeNumber(LangCompiler* comp)
 {
-	while (LangCompiler::isDigit(comp, LangCompiler::peek(comp))) LangCompiler::advance(comp);
+	while (LangCompiler::isDigit(LangCompiler::peek(comp))) LangCompiler::advance(comp);
 
 	// Fraction.
 	if (LangCompiler::peek(comp) == '.' &&
-		LangCompiler::isDigit(comp, LangCompiler::peekNext(comp)))
+		LangCompiler::isDigit(LangCompiler::peekNext(comp)))
 	{
 		LangCompiler::advance(comp);
 
-		while (LangCompiler::isDigit(comp, LangCompiler::peek(comp)))
+		while (LangCompiler::isDigit(LangCompiler::peek(comp)))
 		{
 			LangCompiler::advance(comp);
 		}
 	}
 
 	return LangCompiler::makeToken(comp, LangTokenType::token_number);
+}
+
+LangTokenType LangCompiler::identifierType(LangCompiler* comp)
+{
+	switch (comp->start[0])
+	{
+	case 'a':return LangCompiler::checkKeyword(comp, 1, 2, "nd", LangTokenType::token_and);
+	case 'c':return LangCompiler::checkKeyword(comp, 1, 4, "lass", LangTokenType::token_class);
+	case 'e':return LangCompiler::checkKeyword(comp, 1, 3, "lse", LangTokenType::token_else);
+	case 'i':return LangCompiler::checkKeyword(comp, 1, 1, "f", LangTokenType::token_if);
+	case 'n':return LangCompiler::checkKeyword(comp, 1, 2, "il", LangTokenType::token_nil);
+	case 'o':return LangCompiler::checkKeyword(comp, 1, 1, "r", LangTokenType::token_or);
+	case 'p':return LangCompiler::checkKeyword(comp, 1, 4, "rint", LangTokenType::token_print);
+	case 'r':return LangCompiler::checkKeyword(comp, 1, 5, "eturn", LangTokenType::token_return);
+	case 's':return LangCompiler::checkKeyword(comp, 1, 4, "uper", LangTokenType::token_super);
+	case 'v':return LangCompiler::checkKeyword(comp, 1, 2, "ar", LangTokenType::token_var);
+	case 'w':return LangCompiler::checkKeyword(comp, 1, 4, "hile", LangTokenType::token_while);
+	case 'f':
+		if (comp->current - comp->start > 1)
+		{
+			switch (comp->start[1])
+			{
+			case 'a': return LangCompiler::checkKeyword(comp, 2, 3, "lse", LangTokenType::token_false);
+			case 'o': return LangCompiler::checkKeyword(comp, 2, 1, "r", LangTokenType::token_for);
+			case 'u': return LangCompiler::checkKeyword(comp, 2, 1, "n", LangTokenType::token_fun);
+			}
+		}
+		break;
+
+	case 't':
+		if (comp->current - comp->start > 1)
+		{
+			switch (comp->start[1])
+			{
+			case 'h':return LangCompiler::checkKeyword(comp, 2, 2, "is", LangTokenType::token_this);
+			case 'r':return LangCompiler::checkKeyword(comp, 2, 2, "ue", LangTokenType::token_true);
+			}
+		}
+		break;
+	}
+
+
+
+	return LangTokenType::token_identifier;
+}
+
+
+LangTokenType LangCompiler::checkKeyword(LangCompiler* comp, int start, int length, const char* rest, LangTokenType type)
+{
+	if (comp->current - comp->start == start + length &&
+		memcpy(&comp->start + start, rest, length) == 0)
+	{
+		return type;
+	}
+
+	return LangTokenType::token_identifier;
+}
+
+
+LangToken LangCompiler::makeIdentifier(LangCompiler* comp)
+{
+	while (LangCompiler::isLetter(LangCompiler::peek(comp)) ||
+		LangCompiler::isDigit(LangCompiler::peek(comp)))
+	{
+		LangCompiler::advance(comp);
+	}
+
+	return LangCompiler::makeToken(comp, LangCompiler::identifierType(comp));
 }
 
 
@@ -166,7 +240,7 @@ LangToken LangCompiler::scanToken(LangCompiler* comp)
 
 	char c = LangCompiler::advance(comp);
 
-	if (LangCompiler::isDigit(comp, c)) return LangCompiler::makeNumber(comp);
+	if (LangCompiler::isDigit(c)) return LangCompiler::makeNumber(comp);
 
 	switch (c)
 	{
