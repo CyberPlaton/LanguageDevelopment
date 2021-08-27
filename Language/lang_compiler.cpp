@@ -1,18 +1,297 @@
 #include "lang_compiler.h"
 
+LangParser* LangCompiler::parser = nullptr;
+LangChunk* LangCompiler::compilingChunk = nullptr;
+std::map<LangTokenType, LangParseRule> LangCompiler::rules;
 
-void LangCompiler::compile(LangCompiler* comp, const std::string& source)
+
+void LangCompiler::emitErrorAtCurrentToken(LangCompiler* comp, const std::string& msg)
 {
+	LangCompiler::emitError(comp, comp->parser->current, msg);
+}
 
+
+void LangCompiler::emitErrorAtPreviousToken(LangCompiler* comp, const std::string& msg)
+{
+	LangCompiler::emitError(comp, comp->parser->previous, msg);
+}
+
+
+void LangCompiler::emitError(LangCompiler* comp, LangToken token, const std::string& msg)
+{
+	printf("[Ln %d] Error", token.line);
+
+	if (token.type == LangTokenType::token_eof)
+	{
+		printf(" at End ");
+	}
+	else if (token.type == LangTokenType::token_error)
+	{
+		// ...
+	}
+	else
+	{
+		printf(" at '%.*s' ", token.length, token.start);
+	}
+
+	printf(": %s \n", msg);
+
+	comp->parser->hadError = true;
+	comp->parser->panicMode = true;
+}
+
+
+void LangCompiler::emitReturn(LangCompiler* comp)
+{
+	LangCompiler::emitByte(comp, LangOpCode::op_return);
+}
+
+
+void LangCompiler::emitBytes(LangCompiler* comp, byte b1, byte b2)
+{
+	LangCompiler::emitByte(comp, b1);
+	LangCompiler::emitByte(comp, b2);
+}
+
+
+void LangCompiler::expression(LangCompiler* comp)
+{
+	LangCompiler::parsePrecedence(comp, LangPrecedence::prec_assignment);
+}
+
+
+void LangCompiler::emitConstant(LangCompiler* comp, LangValue value)
+{
+	LangCompiler::emitBytes(comp, LangOpCode::op_return, LangCompiler::makeConstant(comp, value));
+}
+
+
+void LangCompiler::number(LangCompiler* comp)
+{
+	LangValue v = strtod(comp->parser->previous.start, NULL);
+	LangCompiler::emitConstant(comp, v);
+}
+
+
+byte LangCompiler::makeConstant(LangCompiler* comp, LangValue value)
+{
+	int c = LangChunk::addConstant(comp->currentChunk(comp), value);
+
+	if (c > UINT8_MAX)
+	{
+		printf("Error! To many constants on chunk!");
+		return 0;
+	}
+
+	return (byte)c;
+}
+
+
+LangParseRule LangCompiler::getRule(LangCompiler* comp, LangTokenType type)
+{
+	return comp->rules[type];
+}
+
+
+void LangCompiler::binary(LangCompiler* comp)
+{
+	LangTokenType op_type = comp->parser->previous.type;
+
+	LangParseRule* rule = &LangCompiler::getRule(comp, op_type);
+
+	LangCompiler::parsePrecedence(comp, (LangPrecedence)(rule->precedence + 1));
+
+	switch (op_type)
+	{
+	case LangTokenType::token_plus: LangCompiler::emitByte(comp, LangOpCode::op_add); break;
+	case LangTokenType::token_minus:LangCompiler::emitByte(comp, LangOpCode::op_subtract); break;
+	case LangTokenType::token_star:LangCompiler::emitByte(comp, LangOpCode::op_multiply); break;
+	case LangTokenType::token_slash:LangCompiler::emitByte(comp, LangOpCode::op_divide); break;
+	default:return;
+	}
+}
+
+void LangCompiler::unary(LangCompiler* comp)
+{
+	LangCompiler::parsePrecedence(comp, LangPrecedence::prec_unary);
+
+	LangTokenType op_type = comp->parser->previous.type;
+
+	LangCompiler::expression(comp);
+
+	switch (op_type)
+	{
+	case LangTokenType::token_minus: LangCompiler::emitByte(comp, LangOpCode::op_negate); break;
+	default:
+		return;
+	}
+}
+
+
+void LangCompiler::parsePrecedence(LangCompiler* comp, LangPrecedence prec)
+{
+	LangCompiler::advance(comp);
+
+	LangParseFn prefix_rule = LangCompiler::getRule(comp, comp->parser->previous.type).prefix;
+
+	if (prefix_rule == NULL)
+	{
+		printf("Error! Expect Expression!");
+		return;
+	}
+
+
+	prefix_rule(comp);
+
+
+	while (prec <= LangCompiler::getRule(comp, comp->parser->current.type).precedence)
+	{
+		LangCompiler::advance(comp);
+
+		LangParseFn infix_rule = LangCompiler::getRule(comp, comp->parser->current.type).infix;
+
+		infix_rule(comp);
+	}
+}
+
+
+
+void LangCompiler::grouping(LangCompiler* comp)
+{
+	LangCompiler::expression(comp);
+	LangCompiler::consume(comp, LangTokenType::token_right_bracket, "Expected \")\" after expression");
+}
+
+bool LangCompiler::compile(LangCompiler* comp, const std::string& source, LangChunk* chunk)
+{
+	// Initialize rules.
+	comp->rules.emplace(std::make_pair(LangTokenType::token_left_bracket, LangParseRule(LangCompiler::grouping, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_right_bracket, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_left_brace, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_right_brace, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_comma, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_dot, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_semicolon, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_slash, LangParseRule(NULL, LangCompiler::binary, LangPrecedence::prec_factor)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_star, LangParseRule(NULL, LangCompiler::binary, LangPrecedence::prec_factor)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_plus, LangParseRule(NULL, LangCompiler::binary, LangPrecedence::prec_term)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_minus, LangParseRule(LangCompiler::unary, LangCompiler::binary, LangPrecedence::prec_term)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_not_equal, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_equal, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_equal_equal, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_not, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_greater, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_less, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_greater_equal, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_less_equal, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_identifier, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_string, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_number, LangParseRule(LangCompiler::number, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_and, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_or, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_if, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_else, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_true, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_false, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_for, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_while, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_fun, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_nil, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_return, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_super, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_this, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_var, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_class, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_print, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_eof, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+	comp->rules.emplace(std::make_pair(LangTokenType::token_error, LangParseRule(NULL, NULL, LangPrecedence::prec_none)));
+
+
+	// Initialize.
+	comp->start = source.c_str();
+	comp->current = source.c_str();
+	comp->line = 1;
+
+	comp->parser->hadError = false;
+	comp->parser->panicMode = false;
+
+	comp->compilingChunk = chunk;
+
+	LangCompiler::advanceCompiler(comp);
+	LangCompiler::expression(comp);
+	LangCompiler::consume(comp, LangTokenType::token_eof, "Expected EOF");
+	LangCompiler::emitReturn(comp); // End compilation.
+
+
+#ifdef _DEBUG
+	if (comp->parser->hadError)
+	{
+		LangDebugger::disassembleChunk(comp->currentChunk(comp), "code");
+	}
+#endif
+
+
+	return true;
+}
+
+
+void LangCompiler::emitByte(LangCompiler* comp, byte b)
+{
+	LangChunk::writeChunk(LangCompiler::currentChunk(comp), b, comp->parser->previous.line);
+}
+
+
+LangChunk* LangCompiler::currentChunk(LangCompiler* comp)
+{
+	return comp->compilingChunk;
+}
+
+
+void LangCompiler::consume(LangCompiler* comp, LangTokenType type, const std::string& msg)
+{
+	if (comp->parser->current.type == type)
+	{
+		comp->advanceCompiler(comp);
+		return;
+	}
+
+	LangCompiler::emitErrorAtCurrentToken(comp, msg);
+}
+
+
+void LangCompiler::advanceCompiler(LangCompiler* comp)
+{
+	comp->parser->previous = comp->parser->current;
+
+
+	for (;;)
+	{
+		comp->parser->current = LangCompiler::scanToken(comp);
+
+		if (comp->parser->current.type != LangTokenType::token_error) break;
+
+		LangCompiler::emitErrorAtCurrentToken(comp, comp->parser->current.start);
+	}
+}
+
+
+void LangCompiler::freeCompiler(LangCompiler* comp)
+{
+	delete comp->current;
+	delete comp->start;
+
+	comp->current = 0;
+	comp->start = 0;
+	comp->line = 0;
+
+
+	delete comp;
+	comp = 0;
 }
 
 
 void LangCompiler::scan(LangCompiler* comp, const std::string& source)
 {
-	// Initialize.
-	comp->start = source.c_str();
-	comp->current = source.c_str();
-	comp->line = 1;
 
 
 }

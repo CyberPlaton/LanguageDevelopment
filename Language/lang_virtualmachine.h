@@ -1,6 +1,8 @@
 #pragma once
 
 #include "lang_chunk.h"
+#include "lang_compiler.h"
+
 
 enum LangInterpretResult : byte
 {
@@ -12,7 +14,7 @@ enum LangInterpretResult : byte
 
 struct LangVM
 {
-	static LangInterpretResult interpret(LangVM* vm, LangChunk* c);
+	static LangInterpretResult interpret(LangCompiler* comp, LangVM* vm, const std::string& source);
 	static LangInterpretResult run(LangVM* vm);
 	static bool initVM(LangVM* vm);
 	static void freeVM(LangVM* vm);

@@ -39,12 +39,25 @@ LangValue LangVM::popValue(LangVM* vm)
 
 
 
-LangInterpretResult LangVM::interpret(LangVM* vm, LangChunk* c)
+LangInterpretResult LangVM::interpret(LangCompiler* comp, LangVM* vm, const std::string& source)
 {
-	vm->chunk = c;
+	LangChunk chunk;
+
+	if (!LangCompiler::compile(comp, source.c_str(), &chunk))
+	{
+		LangChunk::freeChunk(&chunk);
+		return LangInterpretResult::interpret_compile_error;
+	}
+
+	vm->chunk = &chunk;
 	vm->instruction_pointer = &vm->chunk->code[0];
 
-	return LangVM::run(vm);
+
+	LangInterpretResult result = LangVM::run(vm);
+
+
+	LangChunk::freeChunk(&chunk);
+	return result;
 }
 
 

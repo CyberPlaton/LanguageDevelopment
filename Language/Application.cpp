@@ -125,9 +125,12 @@ void Application::onImGui()
 
 	// TESTING: OUTPUT TO CONSOLE AND INIT/FREE OF CODE CHUNKS
 	console_window = true;
+	std::string source = "source";
 	LangVM vm;
+	LangCompiler compiler;
 	LangVM::initVM(&vm);
 
+	/*
 	LangChunk chunk;
 
 	int index = LangChunk::addConstant(&chunk, 1.7);
@@ -149,8 +152,9 @@ void Application::onImGui()
 	LangChunk::writeChunk(&chunk, LangOpCode::op_return, 123);
 
 	LangDebugger::disassembleChunk(&chunk, "Test Chunk");
+	*/
 
-	LangInterpretResult result = LangVM::interpret(&vm, &chunk);
+	LangInterpretResult result = LangVM::interpret(&compiler, &vm, source);
 
 	if (result == LangInterpretResult::interpret_compile_error)
 	{
@@ -167,10 +171,8 @@ void Application::onImGui()
 
 	LangVM::showStackTop(&vm);
 
-	LangChunk::freeChunk(&chunk);
-
-
 	LangVM::freeVM(&vm);
+	LangCompiler::freeCompiler(&compiler);
 	// TESTING END
 
 

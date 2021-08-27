@@ -1,6 +1,13 @@
 #pragma once
 
 #include "lang_common.h"
+#include "lang_chunk.h"
+
+#ifdef _DEBUG
+#include "lang_debug.h"
+#endif
+
+struct LangCompiler;
 
 enum LangTokenType
 {
@@ -57,6 +64,38 @@ enum LangTokenType
 	token_error,
 };
 
+
+enum LangPrecedence
+{
+	prec_none,
+	prec_assignment,  // =
+	prec_or,          // or
+	prec_and,         // and
+	prec_equality,    // == !=
+	prec_comparison,  // < > <= >=
+	prec_term,        // + -
+	prec_factor,      // * /
+	prec_unary,       // ! -
+	prec_call,        // . ()
+	prec_primary
+};
+
+
+using LangParseFn = void(*)(LangCompiler*);
+struct LangParseRule
+{
+	LangParseRule(LangParseFn prefix_fun, LangParseFn infix_fun, LangPrecedence prec) :
+		prefix(prefix_fun), infix(infix_fun), precedence(prec)
+	{
+
+	}
+
+	LangParseFn prefix;
+	LangParseFn infix;
+	LangPrecedence precedence;
+};
+
+
 struct LangToken
 {
 	LangTokenType type;
@@ -66,13 +105,43 @@ struct LangToken
 };
 
 
+struct LangParser
+{
+	LangToken current;
+	LangToken previous;
+	bool hadError = false;
+	bool panicMode = false;
+};
+
+
+
 struct LangCompiler
 {
+	static void emitErrorAtCurrentToken(LangCompiler* comp, const std::string& msg);
+	static void emitErrorAtPreviousToken(LangCompiler* comp, const std::string& msg);
+	static void emitError(LangCompiler* comp, LangToken token, const std::string& msg);
+
 	/*
 	* Compiling related functions.
 	*/
-	static void compile(LangCompiler* comp, const std::string& source);
-	
+	static bool compile(LangCompiler* comp, const std::string& source, LangChunk* chunk);
+	static void freeCompiler(LangCompiler* comp);
+	static void advanceCompiler(LangCompiler* comp);
+	static void consume(LangCompiler* comp, LangTokenType type, const std::string& msg);
+
+	static void emitReturn(LangCompiler* comp);
+	static void emitByte(LangCompiler* comp, byte b);
+	static void emitBytes(LangCompiler* comp, byte b1, byte b2);
+	static void emitConstant(LangCompiler* comp, LangValue value);
+	static byte makeConstant(LangCompiler* comp, LangValue value);
+	static void expression(LangCompiler* comp);
+	static LangChunk* currentChunk(LangCompiler* comp);
+	static void grouping(LangCompiler* comp);
+	static void unary(LangCompiler* comp);
+	static void binary(LangCompiler* comp);
+	static void number(LangCompiler* comp);
+	static void parsePrecedence(LangCompiler* comp, LangPrecedence prec);
+	static LangParseRule getRule(LangCompiler* comp, LangTokenType type);
 
 	/*
 	* Scanning related functions.
@@ -95,7 +164,15 @@ struct LangCompiler
 	static LangTokenType identifierType(LangCompiler* comp);
 	static LangTokenType checkKeyword(LangCompiler* comp, int start, int length, const char* rest, LangTokenType type);
 
+
 	const char* start = nullptr;
 	const char* current = nullptr;
 	int line = 0;
+
+	static LangParser* parser;
+
+	static LangChunk* compilingChunk;
+
+
+	static std::map<LangTokenType, LangParseRule> rules;
 };

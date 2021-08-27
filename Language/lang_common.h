@@ -8,5 +8,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <stack>
+#include <map>
 
 #endif
